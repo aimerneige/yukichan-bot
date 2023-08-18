@@ -1,0 +1,34 @@
+### golang ###
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+/Godeps/
+
+### intellj ###
+.idea/
+*.iml
+
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+*.code-workspace
+.history/
+.history
+.ionide
+
+### Mac OS X files ###
+.DS_Store
+
+### Temporary ###
+*~
+
+### glide cache ###
+.glide/

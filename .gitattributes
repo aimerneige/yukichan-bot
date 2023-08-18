@@ -1,0 +1,7 @@
+# Enforce linux style line endings.
+* text eol=lf
+
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
