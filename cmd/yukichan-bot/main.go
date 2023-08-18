@@ -11,6 +11,7 @@ import (
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/fadian"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/github"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/match"
+	_ "github.com/aimerneige/yukichan-bot/internal/plugin/music"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/read60s"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/setu"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/waifu"
