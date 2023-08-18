@@ -32,3 +32,6 @@
 
 ### glide cache ###
 .glide/
+
+### build result ###
+bin/yukichan-bot-*
