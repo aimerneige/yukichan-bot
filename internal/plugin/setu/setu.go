@@ -2,17 +2,15 @@ package setu
 
 import (
 	"fmt"
-	"time"
 
 	b64 "encoding/base64"
 
 	"github.com/FloatTech/floatbox/binary"
 	"github.com/FloatTech/floatbox/web"
+	"github.com/aimerneige/yukichan-bot/internal/pkg/common"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	zero "github.com/wdvxdr1123/ZeroBot"
-	"github.com/wdvxdr1123/ZeroBot/extension/rate"
-	"github.com/wdvxdr1123/ZeroBot/extension/single"
 	"github.com/wdvxdr1123/ZeroBot/message"
 )
 
@@ -20,23 +18,11 @@ const (
 	api = "https://api.lolicon.app/setu/v2"
 )
 
-var (
-	limit = rate.NewManager[int64](time.Second*30, 1)
-)
-
 func init() {
 	engine := zero.New()
-
-	single.New(
-		single.WithKeyFn(func(ctx *zero.Ctx) int64 {
-			return ctx.Event.UserID
-		}),
-		single.WithPostFn[int64](func(ctx *zero.Ctx) {
-			ctx.Send("您有操作正在执行，请稍后再试!")
-		}),
-	).Apply(engine)
-
-	engine.OnCommandGroup([]string{"来点色图", "setu"}, zero.SuperUserPermission).
+	common.DefaultSingle.Apply(engine)
+	engine.OnCommandGroup([]string{"来点色图", "setu"},
+		zero.SuperUserPermission).
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			imgB64, err := getSetu()
@@ -55,14 +41,7 @@ func init() {
 				ctx.Send("ERROR: 可能被风控或下载图片用时过长，请耐心等待")
 			}
 		})
-
-	engine.UseMidHandler(func(ctx *zero.Ctx) bool { // 限速器
-		if !limit.Load(ctx.Event.UserID).Acquire() {
-			ctx.Send("您的请求太快，请稍后重试0x0...")
-			return false
-		}
-		return true
-	})
+	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
 func getSetu() (string, error) {
