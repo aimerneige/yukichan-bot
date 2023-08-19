@@ -2,7 +2,7 @@
   <img src=".github/yukichan.jpg" alt="ゆき酱" width = "200">
   <br>
 
-  <h1>YukiChan Bot</h1>
+  <h1>ゆき酱</h1>
 
   🚧🚧 施工中 🚧🚧
 
