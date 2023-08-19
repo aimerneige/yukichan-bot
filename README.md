@@ -18,7 +18,7 @@
 
 ## Plugins
 
-<details><summary>✅ alipay</summary>支付宝到账语言生成</details>
+<details><summary>✅ alipay</summary>支付宝到账语音生成</details>
 <details><summary>🚧 bilibili</summary>哔哩哔哩相关功能</details>
 <details><summary>🚧 chess</summary>国际象棋</details>
 <details><summary>✅ donate</summary>捐赠二维码</details>
