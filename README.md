@@ -1,30 +1,44 @@
-# YukiChan Bot
+<div align="center">
+  <img src=".github/yukichan.jpg" alt="ゆき酱" width = "200">
+  <br>
 
-## Plugin
+  <h1>YukiChan Bot</h1>
 
-🚧施工中🚧
+  🚧🚧 施工中 🚧🚧
 
-- [ ] alipay
-- [ ] bilibili
-- [ ] chess
-- [x] donate
-- [x] fadian
-- [x] fortune
-- [x] github
-- [ ] hello
-- [ ] manager
-- [x] match
-- [ ] morning
-- [x] music
-- [ ] mute
-- [ ] random
-- [x] read60s
-- [x] setu
-- [ ] seturepo
-- [x] suangua
-- [ ] tarot
-- [ ] verify
-- [x] waifu
+  ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的 QQ 机器人。
+
+  <img src="https://counter.seku.su/cmoe?name=YukiChan-Bot&theme=r34" /><br>
+
+  [![GitHub](https://img.shields.io/github/license/aimerneige/yukichan-bot)](https://raw.githubusercontent.com/aimerneige/yukichan-bot/main/LICENSE)
+
+  [![Star Trend](https://api.star-history.com/svg?repos=aimerneige/yukichan-bot&type=Timeline)](https://seladb.github.io/StarTrack-js/#/preload?r=aimerneige,yukichan-bot)
+
+</div>
+
+## Plugins
+
+<details><summary>✅ alipay</summary>支付宝到账语言生成</details>
+<details><summary>🚧 bilibili</summary>哔哩哔哩相关功能</details>
+<details><summary>🚧 chess</summary>国际象棋</details>
+<details><summary>✅ donate</summary>捐赠二维码</details>
+<details><summary>✅ fadian</summary>每日发癫</details>
+<details><summary>✅ fortune</summary>求签</details>
+<details><summary>✅ github</summary>GitHub 仓库信息</details>
+<details><summary>🚧 hello</summary>好友认证</details>
+<details><summary>🚧 manager</summary>简易群管</details>
+<details><summary>✅ match</summary>固定回复</details>
+<details><summary>🚧 morning</summary>早上好</details>
+<details><summary>✅ music</summary>点歌</details>
+<details><summary>🚧 mute</summary>禁言游戏</details>
+<details><summary>🚧 random</summary>随机事件生成器</details>
+<details><summary>✅ read60s</summary>每天 60 秒读懂世界</details>
+<details><summary>✅ setu</summary>色图</details>
+<details><summary>🚧 seturepo</summary>色图库</details>
+<details><summary>✅ suangua</summary>算卦</details>
+<details><summary>🚧 tarot</summary>塔罗牌</details>
+<details><summary>🚧 verify</summary>入群认证</details>
+<details><summary>✅ waifu</summary>随机 AI 老婆</details>
 
 ## LICENSE
 
@@ -36,3 +50,8 @@
 
 - **间接接触（包括但不限于使用 `Http API` 或 跨进程技术）到本项目的软件使用 `AGPLv3` 开源**
 - **不鼓励，不支持一切商业使用**
+
+## Open Source
+
+- [wdvxdr1123/ZeroBot](https://github.com/wdvxdr1123/ZeroBot)
+- [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)
