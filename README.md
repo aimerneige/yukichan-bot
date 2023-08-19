@@ -1,5 +1,31 @@
 # YukiChan Bot
 
+## Plugin
+
+🚧施工中🚧
+
+- [ ] alipay
+- [ ] bilibili
+- [ ] chess
+- [x] donate
+- [x] fadian
+- [x] fortune
+- [x] github
+- [ ] hello
+- [ ] manager
+- [x] match
+- [ ] morning
+- [x] music
+- [ ] mute
+- [ ] random
+- [x] read60s
+- [x] setu
+- [ ] seturepo
+- [x] suangua
+- [ ] tarot
+- [ ] verify
+- [x] waifu
+
 ## LICENSE
 
 <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">
