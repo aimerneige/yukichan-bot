@@ -1,6 +1,8 @@
 package read60s
 
 import (
+	b64 "encoding/base64"
+
 	"github.com/FloatTech/floatbox/binary"
 	"github.com/FloatTech/floatbox/web"
 	log "github.com/sirupsen/logrus"
@@ -19,13 +21,17 @@ func init() {
 			data, err := web.GetData(api)
 			if err != nil {
 				log.Errorln("[read60s]", err)
-				ctx.Send("获取早报图片失败了呢，可能是服务器网络出问题了罢。")
+				ctx.Send("网络错误，获取早报信息失败。")
 				return
 			}
 			apiMsg := gjson.Get(binary.BytesToString(data), "msg").String()
 			if apiMsg == "Success" {
 				imageUrl := gjson.Get(binary.BytesToString(data), "imageUrl").String()
-				ctx.Send(message.Image(imageUrl))
+				imageData, err := web.GetData(imageUrl)
+				if err != nil {
+					ctx.Send("网络错误，早报图片获取失败。")
+				}
+				ctx.Send(message.Image("base64://" + b64.StdEncoding.EncodeToString(imageData)))
 			} else {
 				ctx.Send("")
 			}
