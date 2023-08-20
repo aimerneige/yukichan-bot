@@ -3,6 +3,7 @@ package alipay
 import (
 	b64 "encoding/base64"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/FloatTech/floatbox/web"
@@ -18,11 +19,10 @@ func init() {
 	zero.OnPrefixGroup([]string{"支付宝到账", "alipay"}).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
-			mp3Url := fmt.Sprintf(api, strings.TrimSpace(args))
-			data, err := web.GetData(mp3Url)
-			if err != nil {
-				return
+			if moneyCount, err := strconv.ParseFloat(strings.TrimSpace(args), 64); err == nil && moneyCount > 0 {
+				if data, err := web.GetData(fmt.Sprintf(api, moneyCount)); err == nil {
+					ctx.SendChain(message.Record("base64://" + b64.StdEncoding.EncodeToString(data)))
+				}
 			}
-			ctx.SendChain(message.Record("base64://" + b64.StdEncoding.EncodeToString(data)))
 		})
 }
