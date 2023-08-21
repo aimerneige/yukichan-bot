@@ -7,6 +7,8 @@
   🚧🚧 施工中 🚧🚧
 
   ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的 QQ 机器人。
+	
+  本机器人主要用于自用，开发过程中没有考虑通用性，且部分功能参考了社区内的其他机器人，如果您想要一个功能更加完善的机器人，请使用 [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)。
 
   <img src="https://counter.seku.su/cmoe?name=YukiChan-Bot&theme=r34" /><br>
 

@@ -1,3 +1,7 @@
+// This file is modified from ZeroBot-Plugin.
+// View this link for more detail:
+// https://github.com/FloatTech/ZeroBot-Plugin/tree/master/plugin/alipayvoice
+
 package alipay
 
 import (
