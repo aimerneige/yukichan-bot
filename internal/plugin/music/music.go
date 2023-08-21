@@ -20,7 +20,11 @@ func init() {
 			if args == "" {
 				args = "My Dearest"
 			}
-			ctx.SendChain(message.Music("163", queryNeteaseMusic(args)))
+			musicId := queryNeteaseMusic(args)
+			if musicId == 0 {
+				musicId = int64(825343)
+			}
+			ctx.SendChain(message.Music("163", musicId))
 		})
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }

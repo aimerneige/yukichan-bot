@@ -14,7 +14,7 @@
 
 </div>
 
-> 本机器人主要用于自用，开发过程中没有考虑通用性，且部分功能参考了社区内的其他机器人，如果您想要一个功能更加完善的机器人，请使用 [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)。
+> 本机器人主要用于自用，开发过程中没有考虑通用性，按照个人喜好加了很多彩蛋和私货，且部分功能参考了社区内的其他机器人，如果您想要一个通用且功能更加完善的机器人，推荐查阅 [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)，本仓库的原创插件也会尽量同步更新到这个仓库。
 
 ## Star History
 
