@@ -33,7 +33,7 @@ func init() {
 				}
 				ctx.Send(message.Image("base64://" + b64.StdEncoding.EncodeToString(imageData)))
 			} else {
-				ctx.Send("")
+				ctx.Send("API 错误，无法获取早报图片。")
 			}
 		})
 }
