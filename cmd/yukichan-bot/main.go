@@ -23,7 +23,7 @@ import (
 // Path variables are overrides during build
 // See the Makefile for more information.
 var (
-	ConfPath string = "./config/config.yaml"
+	ConfPath string = "./config/application.yaml"
 )
 
 var (

@@ -11,6 +11,7 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/FloatTech/zbputils/ctxext"
 	"github.com/aimerneige/yukichan-bot/internal/pkg/common"
 	log "github.com/sirupsen/logrus"
 	zero "github.com/wdvxdr1123/ZeroBot"
@@ -35,11 +36,13 @@ func init() {
 		})
 	engine.OnFullMatch("运势预测").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			ctx.SendChain(drawCard(1)...)
+			imgs := solveMessage(1)
+			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
 		})
 	engine.OnFullMatch("塔罗占卜").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			ctx.SendChain(drawCard(3)...)
+			imgs := solveMessage(3)
+			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
 		})
 	engine.OnPrefix("抽塔罗牌").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
@@ -55,13 +58,43 @@ func init() {
 			if count <= 0 || count > 8 {
 				count = 1
 			}
-			ctx.SendChain(drawCard(int(count))...)
+			imgs := solveMessage(int(count))
+			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
 		})
 
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
-func drawCard(number int) []message.MessageSegment {
+func solveMessage(number int) (imgs message.Message) {
+	cards, err := drawCard(number)
+	if err != nil {
+		imgs = append(imgs, message.Text("发生错误，无法读取塔罗图片"))
+		return
+	}
+	for _, card := range cards {
+		imgData, err := fs.ReadFile(deckEmbedFS, card)
+		// 读取图片
+		if err != nil {
+			log.Errorln("[tarot]", "Fail to read card image", err)
+			imgs = append(imgs, message.Text("[ERROR] 读取图片失败\n"))
+			continue
+		}
+		// 翻转图片，实现正逆位
+		if (rand.Int() % 2) == 0 {
+			flippedImageData, err := flipImage(imgData)
+			if err != nil {
+				log.Errorln("[tarot]", "Fail to flip card image", err)
+				continue
+			} else {
+				imgData = flippedImageData
+			}
+		}
+		imgs = append(imgs, message.Image("base64://"+b64.StdEncoding.EncodeToString(imgData)))
+	}
+	return
+}
+
+func drawCard(number int) (cards []string, err error) {
 	theme := "classic"
 	if (rand.Int() % 3) == 0 {
 		theme = "bilibili"
@@ -69,8 +102,8 @@ func drawCard(number int) []message.MessageSegment {
 	deckPath := path.Join("./assets/deck/", theme)
 	cardImages, err := fs.ReadDir(deckEmbedFS, deckPath)
 	if err != nil {
-		log.Errorln("[tarot]", "Fail to read cardImages.", err)
-		return []message.MessageSegment{message.Text("发生错误，无法读取塔罗图片。")}
+		log.Errorln("[tarot]", "Fail to read card images.", err)
+		return
 	}
 	cardImagePaths := make([]string, 0, 78)
 	for _, card := range cardImages {
@@ -79,29 +112,8 @@ func drawCard(number int) []message.MessageSegment {
 			cardImagePaths = append(cardImagePaths, _imgPath)
 		}
 	}
-	cardResult := randomDraw(cardImagePaths, number)
-	replyMsg := []message.MessageSegment{}
-	replyMsg = append(replyMsg, message.Text("你抽到的卡牌如下："))
-	for _, imgPath := range cardResult {
-		// 读取图片
-		imgData, err := fs.ReadFile(deckEmbedFS, imgPath)
-		if err != nil {
-			log.Errorln("[tarot]", "Fail to read img", err)
-			replyMsg = append(replyMsg, message.Text("[ERROR] 读取图片失败\n"))
-		}
-		// 翻转图片，实现正逆位
-		if (rand.Int() % 2) == 0 {
-			flippedImageData, err := flipImage(imgData)
-			if err != nil {
-				log.Errorln("[tarot]", "Fail to flip image", err)
-				continue
-			} else {
-				imgData = flippedImageData
-			}
-		}
-		replyMsg = append(replyMsg, message.Image("base64://"+b64.StdEncoding.EncodeToString(imgData)))
-	}
-	return replyMsg
+	cards = randomDraw(cardImagePaths, number)
+	return
 }
 
 // randomDraw 随机不放回抽取
