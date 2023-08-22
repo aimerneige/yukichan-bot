@@ -88,7 +88,7 @@ func drawCard(number int) message.Message {
 		// 读取图片
 		if err != nil {
 			log.Errorln("[tarot]", "Fail to read card image", err)
-			imgs[i] = message.Text("[ERROR] 读取图片失败\n")
+			imgs[i] = message.Text("[ERROR] 读取图片失败，请查阅后台日志。")
 			continue
 		}
 		// 翻转图片，实现正逆位
@@ -96,6 +96,7 @@ func drawCard(number int) message.Message {
 			flippedImageData, err := flipImage(imgData)
 			if err != nil {
 				log.Errorln("[tarot]", "Fail to flip card image", err)
+				imgs[i] = message.Text("[ERROR] 翻转图片失败，请查阅后台日志。")
 				continue
 			} else {
 				imgData = flippedImageData
