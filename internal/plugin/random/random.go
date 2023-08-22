@@ -29,7 +29,7 @@ func init() {
 		})
 	engine.OnFullMatchGroup([]string{"掷骰子", "/dice"}).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			replyTextMessage := fmt.Sprintf("掷出了 %d 点。", (rand.Int()%2)+1)
+			replyTextMessage := fmt.Sprintf("掷出了 %d 点。", (rand.Int()%6)+1)
 			ctx.SendChain(message.At(ctx.Event.UserID), message.Text(replyTextMessage))
 		})
 }
