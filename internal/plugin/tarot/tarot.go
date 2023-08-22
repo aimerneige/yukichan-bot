@@ -80,15 +80,15 @@ func drawCard(number int) message.Message {
 			cardImagePaths = append(cardImagePaths, _imgPath)
 		}
 	}
-	cards := randomDraw(cardImagePaths, number)
-	log.Debugln("[tarot]", fmt.Sprintf("cards: %v", cards))
+	cardResult := randomDraw(cardImagePaths, number)
+	log.Debugln("[tarot]", fmt.Sprintf("cards: %v", cardResult))
 	imgs := make([]message.MessageSegment, number)
-	for i, card := range cards {
-		imgData, err := fs.ReadFile(deckEmbedFS, card)
+	for i, imgPath := range cardResult {
+		imgData, err := fs.ReadFile(deckEmbedFS, imgPath)
 		// 读取图片
 		if err != nil {
 			log.Errorln("[tarot]", "Fail to read card image", err)
-			imgs[i] = message.Text("[ERROR] 读取图片失败，请查阅后台日志。")
+			imgs[i] = message.Text("[ERROR] 读取图片失败，请查阅后台日志。\n")
 			continue
 		}
 		// 翻转图片，实现正逆位
@@ -96,7 +96,7 @@ func drawCard(number int) message.Message {
 			flippedImageData, err := flipImage(imgData)
 			if err != nil {
 				log.Errorln("[tarot]", "Fail to flip card image", err)
-				imgs[i] = message.Text("[ERROR] 翻转图片失败，请查阅后台日志。")
+				imgs[i] = message.Text("[ERROR] 翻转图片失败，请查阅后台日志。\n")
 				continue
 			} else {
 				imgData = flippedImageData
