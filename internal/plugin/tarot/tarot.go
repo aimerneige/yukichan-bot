@@ -13,6 +13,7 @@ import (
 	"strconv"
 
 	"github.com/aimerneige/yukichan-bot/internal/pkg/common"
+	"github.com/disintegration/imaging"
 	log "github.com/sirupsen/logrus"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
@@ -93,7 +94,7 @@ func drawCard(number int) message.Message {
 		}
 		// 翻转图片，实现正逆位
 		if (rand.Int() % 2) == 0 {
-			flippedImageData, err := flipImage(imgData)
+			flippedImageData, err := rotateImage(imgData)
 			if err != nil {
 				log.Errorln("[tarot]", "Fail to flip card image", err)
 				imgs[i] = message.Text("[ERROR] 翻转图片失败，请查阅后台日志。\n")
@@ -124,7 +125,7 @@ func randomDraw(s []string, k int) []string {
 	return result
 }
 
-func flipImage(imageData []byte) ([]byte, error) {
+func rotateImage(imageData []byte) ([]byte, error) {
 	// Decode the []byte into an image.Image.
 	img, _, err := image.Decode(bytes.NewReader(imageData))
 	if err != nil {
@@ -132,18 +133,12 @@ func flipImage(imageData []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	// Flip the image vertically.
-	bounds := img.Bounds()
-	flipped := image.NewRGBA(bounds)
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			flipped.Set(bounds.Max.X-x-1, bounds.Max.Y-y-1, img.At(x, y))
-		}
-	}
+	// rotate image
+	rotated := imaging.Rotate180(img)
 
-	// Encode the flipped image as a []byte.
+	// Encode the rotated image as a []byte.
 	var buf bytes.Buffer
-	if err := png.Encode(&buf, flipped); err != nil {
+	if err := png.Encode(&buf, rotated); err != nil {
 		log.Errorln("[tarot]", "Fail to encode flipped image", err)
 		return nil, err
 	}
