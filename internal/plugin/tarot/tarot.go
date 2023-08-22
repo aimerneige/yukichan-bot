@@ -65,11 +65,12 @@ func init() {
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
-func solveMessage(number int) (imgs message.Message) {
+func solveMessage(number int) message.Message {
+	imgs := make([]message.MessageSegment, number)
 	cards, err := drawCard(number)
 	if err != nil {
 		imgs = append(imgs, message.Text("发生错误，无法读取塔罗图片"))
-		return
+		return imgs
 	}
 	for _, card := range cards {
 		imgData, err := fs.ReadFile(deckEmbedFS, card)
@@ -91,7 +92,7 @@ func solveMessage(number int) (imgs message.Message) {
 		}
 		imgs = append(imgs, message.Image("base64://"+b64.StdEncoding.EncodeToString(imgData)))
 	}
-	return
+	return imgs
 }
 
 func drawCard(number int) (cards []string, err error) {
