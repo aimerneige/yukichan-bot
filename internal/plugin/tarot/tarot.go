@@ -11,7 +11,6 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/FloatTech/zbputils/ctxext"
 	"github.com/aimerneige/yukichan-bot/internal/pkg/common"
 	log "github.com/sirupsen/logrus"
 	zero "github.com/wdvxdr1123/ZeroBot"
@@ -36,13 +35,11 @@ func init() {
 		})
 	engine.OnFullMatch("运势预测").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			imgs := solveMessage(1)
-			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
+			ctx.Send(solveMessage(1))
 		})
 	engine.OnFullMatch("塔罗占卜").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			imgs := solveMessage(3)
-			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
+			ctx.Send(solveMessage(3))
 		})
 	engine.OnPrefix("抽塔罗牌").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
@@ -58,8 +55,7 @@ func init() {
 			if count <= 0 || count > 8 {
 				count = 1
 			}
-			imgs := solveMessage(int(count))
-			ctx.Send(message.Message{ctxext.FakeSenderForwardNode(ctx, imgs...)})
+			ctx.Send(solveMessage(int(count)))
 		})
 
 	engine.UseMidHandler(common.DefaultSpeedLimit)
