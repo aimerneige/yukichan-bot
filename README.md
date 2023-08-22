@@ -36,7 +36,7 @@
 <details><summary>🚧 morning</summary>早上好</details>
 <details><summary>✅ music</summary>点歌</details>
 <details><summary>🚧 mute</summary>禁言游戏</details>
-<details><summary>🚧 random</summary>随机事件生成器</details>
+<details><summary>✅ random</summary>随机事件生成器</details>
 <details><summary>✅ read60s</summary>每天 60 秒读懂世界</details>
 <details><summary>✅ setu</summary>色图</details>
 <details><summary>🚧 seturepo</summary>色图库</details>
