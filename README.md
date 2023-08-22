@@ -41,7 +41,7 @@
 <details><summary>✅ setu</summary>色图</details>
 <details><summary>🚧 seturepo</summary>色图库</details>
 <details><summary>✅ suangua</summary>算卦</details>
-<details><summary>🚧 tarot</summary>塔罗牌</details>
+<details><summary>✅ tarot</summary>塔罗牌</details>
 <details><summary>🚧 verify</summary>入群认证</details>
 <details><summary>✅ waifu</summary>随机 AI 老婆</details>
 
