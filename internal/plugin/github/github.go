@@ -1,6 +1,7 @@
 package github
 
 import (
+	b64 "encoding/base64"
 	"strings"
 
 	"github.com/FloatTech/floatbox/binary"
@@ -20,7 +21,7 @@ func init() {
 	zero.OnPrefix("https://github.com/").SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			repoInfo := ctx.Event.Message.ExtractPlainText()[19:]
-			// 去除域名后内容过短
+			// 去除域名后内容过短，忽略消息
 			if len(repoInfo) <= 2 {
 				return
 			}
@@ -40,10 +41,19 @@ func init() {
 				return
 			}
 			repoStatusMessage := gjson.Get(binary.BytesToString(data), "message").String()
+			// 仓库不存在，忽略
 			if repoStatusMessage == "Not Found" {
 				return
 			}
+			// 下载仓库图片
+			imageData, err := web.GetData(imageAPI + repoInfo)
+			if err != nil {
+				log.Errorln("[github]", "Fail to download repo image", err)
+				return
+			}
 			// 发送仓库图片
-			ctx.SendChain(message.Reply(ctx.Event.MessageID), message.Text("https://github.com/"+repoInfo), message.Image(imageAPI+repoInfo))
+			repoText := "https://github.com/" + repoInfo
+			imageB64 := "base64://" + b64.StdEncoding.EncodeToString(imageData)
+			ctx.SendChain(message.Reply(ctx.Event.MessageID), message.Text(repoText), message.Image(imageB64))
 		})
 }
