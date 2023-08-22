@@ -62,7 +62,7 @@ func init() {
 }
 
 func solveMessage(number int) message.Message {
-	imgs := make([]message.MessageSegment, number)
+	imgs := make([]message.MessageSegment, 0, number)
 	cards, err := drawCard(number)
 	if err != nil {
 		imgs = append(imgs, message.Text("发生错误，无法读取塔罗图片"))
