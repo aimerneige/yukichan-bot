@@ -1,5 +1,5 @@
 <div align="center">
-  <img src=".github/yukichan.jpg" alt="ゆき酱" width = "200">
+  <img src=".github/yukichan.svg" alt="ゆき酱" width = "200">
   <br>
 
   <h1>ゆき酱</h1>
