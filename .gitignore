@@ -35,3 +35,6 @@
 
 ### build result ###
 bin/yukichan-bot-*
+
+### database file ###
+data/chess/chess.db
