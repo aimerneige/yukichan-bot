@@ -3,6 +3,7 @@ package chess
 import (
 	_ "embed"
 	"encoding/base64"
+	"strings"
 
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/service"
@@ -63,11 +64,13 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnRegex("!([0-9]|[A-Z]|[a-z]|=|-)+", zero.OnlyGroup).SetBlock(true).
+	engine.OnRegex("[!|！]([0-9]|[A-Z]|[a-z]|=|-)+", zero.OnlyGroup).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			moveStr := ctx.Event.Message.ExtractPlainText()[1:]
+			userMsgStr := ctx.Event.Message.ExtractPlainText()
+			userMsgStr = strings.Replace(userMsgStr, "！", "!", 1)
+			moveStr := userMsgStr[1:]
 			if replyMessage := service.Play(userUin, groupCode, moveStr); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
