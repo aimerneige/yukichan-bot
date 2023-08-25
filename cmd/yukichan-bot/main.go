@@ -7,6 +7,7 @@ import (
 	"github.com/wdvxdr1123/ZeroBot/driver"
 
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/alipay"
+	_ "github.com/aimerneige/yukichan-bot/internal/plugin/chess"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/donate"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/fadian"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/fortune"

@@ -56,7 +56,7 @@ func getFadianPost(name string) string {
 
 func getFadianText() string {
 	var textJSON TextJSON
-	err := json.Unmarshal(postJSONData, &textJSON)
+	err := json.Unmarshal(textJSONData, &textJSON)
 	if err != nil {
 		log.Errorln("[fadian]", err)
 		return "解析 JSON 失败，请查阅后台日志。"

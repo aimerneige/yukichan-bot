@@ -27,7 +27,7 @@ func init() {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Game(groupCode, userUin, userName); len(replyMessage) > 1 {
+			if replyMessage := service.Game(groupCode, userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -35,7 +35,7 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Resign(groupCode, userUin); len(replyMessage) > 1 {
+			if replyMessage := service.Resign(groupCode, userUin); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -43,14 +43,14 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Draw(groupCode, userUin); len(replyMessage) > 1 {
+			if replyMessage := service.Draw(groupCode, userUin); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
 	engine.OnFullMatchGroup([]string{"中断", "abort"}, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Abort(groupCode); len(replyMessage) > 1 {
+			if replyMessage := service.Abort(groupCode); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -59,7 +59,7 @@ func init() {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Blindfold(groupCode, userUin, userName); len(replyMessage) > 1 {
+			if replyMessage := service.Blindfold(groupCode, userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -68,13 +68,13 @@ func init() {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
 			moveStr := ctx.Event.Message.ExtractPlainText()[1:]
-			if replyMessage := service.Play(userUin, groupCode, moveStr); len(replyMessage) > 1 {
+			if replyMessage := service.Play(userUin, groupCode, moveStr); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
 	engine.OnFullMatchGroup([]string{"排行榜", "ranking"}).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			if replyMessage := service.Ranking(); len(replyMessage) > 1 {
+			if replyMessage := service.Ranking(); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -82,7 +82,7 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
-			if replyMessage := service.Rate(userUin, userName); len(replyMessage) > 1 {
+			if replyMessage := service.Rate(userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})

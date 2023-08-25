@@ -24,7 +24,6 @@ var pythonScriptBoard2SVG string
 var pythonScriptPGN2GIF string
 
 var instance *chessService
-var dbService *DBService
 
 const (
 	eloDefault   = 500
@@ -53,7 +52,6 @@ func init() {
 	instance = &chessService{
 		gameRooms: make(map[int64]chessRoom, 1),
 	}
-	dbService = NewDBService(database.GetDB())
 }
 
 // Game 下棋
@@ -286,6 +284,7 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			eloString := ""
 			// 若走子次数超过 4 认为是有效对局，存入数据库
 			if len(room.chessGame.Moves()) > 4 {
+				dbService := NewDBService(database.GetDB())
 				if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 					log.Errorln("[chess]", "Fail to create PGN.", err)
 				}
@@ -335,6 +334,7 @@ func Ranking() message.Message {
 
 // Rate 获取等级分
 func Rate(senderUin int64, senderName string) message.Message {
+	dbService := NewDBService(database.GetDB())
 	rate, err := dbService.GetELORateByUin(senderUin)
 	if err == gorm.ErrRecordNotFound {
 		return simpleText("没有查找到等级分信息。请至少进行一局对局。")
@@ -478,6 +478,7 @@ func getELOString(room chessRoom, whiteScore, blackScore float64) (string, error
 		return "", nil
 	}
 	eloString := "玩家等级分：\n"
+	dbService := NewDBService(database.GetDB())
 	if err := updateELORate(room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName, whiteScore, blackScore, dbService); err != nil {
 		eloString += "发生错误，无法更新等级分。"
 		return eloString, err
@@ -493,6 +494,7 @@ func getELOString(room chessRoom, whiteScore, blackScore float64) (string, error
 
 // getRankingString 获取等级分排行榜的文本内容
 func getRankingString() (string, error) {
+	dbService := NewDBService(database.GetDB())
 	eloList, err := dbService.GetHighestRateList()
 	if err != nil {
 		return "", err
