@@ -33,14 +33,12 @@
 <details><summary>✅ manager</summary>简易群管</details>
 <details><summary>✅ match</summary>固定回复</details>
 <details><summary>✅ music</summary>点歌</details>
-<details><summary>🚧 mute</summary>禁言游戏</details>
 <details><summary>✅ random</summary>随机事件生成器</details>
 <details><summary>✅ read60s</summary>每天 60 秒读懂世界</details>
 <details><summary>✅ setu</summary>色图</details>
 <details><summary>🚧 seturepo</summary>色图库</details>
 <details><summary>✅ suangua</summary>算卦</details>
 <details><summary>✅ tarot</summary>塔罗牌</details>
-<details><summary>🚧 verify</summary>入群认证</details>
 <details><summary>✅ waifu</summary>随机 AI 老婆</details>
 
 ## LICENSE
