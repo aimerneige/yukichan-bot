@@ -20,7 +20,7 @@ const (
 		"- 修改名片@QQ XXX\n" +
 		"- 修改头衔@QQ XXX\n" +
 		"- 申请头衔 XXX\n" +
-		"- 踢出群聊@QQ\n"
+		"- 踢出群聊@QQ"
 )
 
 func init() {
