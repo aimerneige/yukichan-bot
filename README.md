@@ -30,10 +30,8 @@
 <details><summary>✅ fadian</summary>每日发癫</details>
 <details><summary>✅ fortune</summary>求签</details>
 <details><summary>✅ github</summary>GitHub 仓库信息</details>
-<details><summary>🚧 hello</summary>好友认证</details>
-<details><summary>🚧 manager</summary>简易群管</details>
+<details><summary>✅ manager</summary>简易群管</details>
 <details><summary>✅ match</summary>固定回复</details>
-<details><summary>🚧 morning</summary>早上好</details>
 <details><summary>✅ music</summary>点歌</details>
 <details><summary>🚧 mute</summary>禁言游戏</details>
 <details><summary>✅ random</summary>随机事件生成器</details>
