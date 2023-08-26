@@ -451,12 +451,12 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 		if err := exec.Command("python", "-c", pythonScriptBoard2SVG, room.chessGame.FEN(), svgFilePath, uciStr).Run(); err != nil {
 			log.Debugln("[chess]", "python", " ", "-c", " ", "python_script_board2svg", " ", room.chessGame.FEN(), " ", svgFilePath, " ", uciStr)
 			log.Errorln("[chess]", "Unable to generate svg file.", err)
-			return "", false, "无法生成 svg 图片"
+			return "", false, "无法生成 svg 图片，请检查 python-chess 库是否被正确安装。"
 		}
 		// 调用 inkscape 将 svg 图片转化为 png 图片
 		if err := exec.Command(inkscapePath, "-w", "720", "-h", "720", svgFilePath, "-o", pngFilePath).Run(); err != nil {
 			log.Errorln("[chess]", "Unable to convert to png.", err)
-			return "", false, "无法生成 png 图片"
+			return "", false, "无法生成 png 图片，请检查 inkscape 安装情况及其依赖 libfuse。"
 		}
 		// 尝试读取 png 图片
 		imgData, err := os.ReadFile(pngFilePath)

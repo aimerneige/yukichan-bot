@@ -25,7 +25,7 @@
 <details><summary>✅ alipay</summary>支付宝到账语音生成</details>
 <details><summary>🚧 bilibili</summary>哔哩哔哩相关功能</details>
 <details><summary>🚧 blacklist</summary>黑名单</details>
-<details><summary>🚧 chess</summary>国际象棋</details>
+<details><summary>✅ chess</summary>国际象棋</details>
 <details><summary>✅ donate</summary>捐赠二维码</details>
 <details><summary>✅ fadian</summary>每日发癫</details>
 <details><summary>✅ fortune</summary>求签</details>
