@@ -23,10 +23,11 @@ import (
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/waifu"
 )
 
-// Path variables are overrides during build
+// Variables are overrides during build
 // See the Makefile for more information.
 var (
-	ConfPath string = "./config/application.yaml"
+	ConfPath   string = "./config/application.yaml"
+	DebugLevel uint32 = 4
 )
 
 var (
@@ -42,7 +43,7 @@ func init() {
 		TimestampFormat: "2006-01-02 15:04:05",
 		LogFormat:       "[zero][%time%][%lvl%]: %msg% \n",
 	})
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.Level(DebugLevel))
 }
 
 func main() {

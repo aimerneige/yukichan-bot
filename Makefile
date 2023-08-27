@@ -1,10 +1,11 @@
-GO				:= go
+GO						:= go
 GO_SOURCES		:= $(shell find . -type f -name "*.go")
 TARGET_NAME		:= yukichan-bot
-GOOS			?= linux
-GOARCH			?= amd64
-VERSION			?= v0.0.1-alpha
-CONF_PATH		?= ./config/config.yaml
+GOOS					?= linux
+GOARCH				?= amd64
+VERSION				?= v0.0.1-alpha
+CONF_PATH			?= ./config/config.yaml
+DEBUG_LEVEL		?= 5
 
 .PHONY: dev run release build fmt clean
 
@@ -23,7 +24,7 @@ build: bin/$(TARGET_NAME)-$(GOOS)-$(GOARCH)-$(VERSION)
 bin/$(TARGET_NAME)-$(GOOS)-$(GOARCH)-$(VERSION): $(GO_SOURCES)
 	GOOS=$(GOOS) GOARCH=$(GOARCH) \
 	$(GO) build -o ./bin/$(TARGET_NAME)-$(GOOS)-$(GOARCH)-$(VERSION) \
-	-ldflags "-X main.ConfPath=$(CONF_PATH)" \
+	-ldflags "-X main.ConfPath=$(CONF_PATH) -X main.DebugLevel=$(DEBUG_LEVEL)" \
 	cmd/$(TARGET_NAME)/*
 
 fmt:
