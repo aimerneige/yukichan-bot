@@ -9,6 +9,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/aimerneige/yukichan-bot/internal/config"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
 	"github.com/notnil/chess"
 	"github.com/sirupsen/logrus"
@@ -27,7 +28,6 @@ var instance *chessService
 
 const (
 	eloDefault   = 500
-	tempFileDir  = "./temp/chess/"
 	inkscapePath = "./bin/inkscape"
 )
 
@@ -445,6 +445,7 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 		} else {
 			uciStr = "None"
 		}
+		tempFileDir := config.Conf.TempDir["chess"]
 		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.svg", groupCode))
 		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.png", groupCode))
 		// 调用 python 脚本生成 svg 文件
@@ -561,6 +562,7 @@ func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteS
 
 // generateGIF 使用 PGN 字符串生成对局的 GIF
 func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
+	tempFileDir := config.Conf.TempDir["chess"]
 	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, fmt.Sprintf("%d", groupCode)).Run(); err != nil {
 		log.Debugln("[chess]", "python", " ", "-c", " ", "python_sript_pgn2gif", " ", pgnStr, " ", tempFileDir, " ", fmt.Sprintf("%d", groupCode))
 		return "", "生成 gif 时发生错误", err
