@@ -1,5 +1,5 @@
 <div align="center">
-  <img src=".github/yukichan.svg" alt="ゆき酱" width = "200">
+  <img src="img/yukichan.svg" alt="ゆき酱" width = "200">
   <br>
 
   <h1>ゆき酱</h1>
@@ -15,6 +15,37 @@
 </div>
 
 > 本机器人主要用于自用，开发过程中没有考虑通用性，按照个人喜好加了很多彩蛋和私货，且部分功能参考了社区内的其他机器人，如果您想要一个通用且功能更加完善的机器人，推荐查阅 [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)，本仓库的原创插件也会尽量同步更新到这个仓库。
+
+## How to build
+
+本项目使用 Makefile 管理编译流程，使用如下指令即可快速编译可执行文件：
+
+```bash
+make build
+```
+
+使用如下指令快速运行并测试程序：
+
+```bash
+make run
+```
+
+更多信息请查阅 `Makefile`
+
+## Dependency
+
+1. [inkscape](https://inkscape.org/release/)
+2. [python](https://www.python.org/downloads/)
+3. [python-chess](https://github.com/niklasf/python-chess)
+
+## How to use
+
+本项目符合 [OneBot](https://github.com/howmanybots/onebot) 标准，可基于以下项目与机器人框架/平台进行交互
+| 项目地址                                                                    | 平台                                          | 核心作者       |
+| --------------------------------------------------------------------------- | --------------------------------------------- | -------------- |
+| [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)                             | [MiraiGo](https://github.com/Mrs4s/MiraiGo)   | Mrs4s          |
+| [onebot-kotlin](https://github.com/yyuueexxiinngg/onebot-kotlin)            | [Mirai](https://github.com/mamoe/mirai)       | yyuueexxiinngg |
+| [oicq/http-api](https://github.com/takayama-lily/oicq/tree/master/http-api) | [OICQ](https://github.com/takayama-lily/oicq) | takayama       |
 
 ## Star History
 
@@ -131,6 +162,32 @@
 </details>
 
 </details>
+
+## Q&A
+
+### 是否会支持群内多盘对局同时进行
+
+每个群内同时只能存在一盘对局，如果有多盘对局同时进行的需求可以 fork 之后自己改。\
+本项目主要是希望提供一个在群内下棋的环境，重要的是大家一起围观、交流和讨论棋局，而不是单纯实现对局。太多的对局同时进行不仅会导致群消息过多炸群，而且也不利于交流。如果只是需要下棋，chess.com 的邀请链接完全可以创建无限的棋局。<sub>~绝对不是开发者懒得写~</sub>
+
+### 无法生成 PNG
+
+您的发行版无法运行 AppImage 封装的 Inkscape，常见于 Ubuntu。一般地，使用下面的指令安装 `libfuse2` 即可。（仅 Ubuntu）
+
+```bash
+sudo add-apt-repository universe
+sudo apt install libfuse2
+```
+
+有任何疑问请参考 https://github.com/AppImage/AppImageKit/wiki/FUSE#install-fuse
+
+## 交流群
+
+点击链接或扫码加入 QQ 群:
+
+[857066811](https://qm.qq.com/cgi-bin/qm/qr?k=rMtw1SlmoFOp08i5Zw5bM361ljIyzVA-&authKey=9OUzro5oH5CnnFaAbIMwa60987+8ZMwu5GvUAlFUzDIQKVL91z9zUhWp6m1Kayf8&noverify=0)
+
+![qrcode 857066811](img/qr-code.png)
 
 ## LICENSE
 
