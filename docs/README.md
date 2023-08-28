@@ -151,7 +151,12 @@ make run
 - /waifu
 
 </details>
+<details><summary>✅ wangyiyun 网易云热评</summary>
 
+- 来份网易云热评
+- /wyy
+
+</details>
 </details>
 
 ## Q&A
