@@ -133,13 +133,6 @@ make run
 > 注：不公开的服务
 
 </details>
-<details><summary>🚧 seturepo 色图库</summary>
-
-- 🚧🚧 施工中 🚧🚧
-
-> 注：不公开的服务
-
-</details>
 <details><summary>✅ suangua 算卦</summary>
 
 - 算卦 代码无 bug

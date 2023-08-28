@@ -1,5 +1,0 @@
-package seturepo
-
-func init() {
-
-}

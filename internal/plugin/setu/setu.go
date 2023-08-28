@@ -2,6 +2,9 @@ package setu
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
+	"path"
 
 	b64 "encoding/base64"
 
@@ -18,11 +21,14 @@ const (
 	api = "https://api.lolicon.app/setu/v2"
 )
 
+var localSetu []string = []string{
+	"/opt/yukichan/seturepo",
+}
+
 func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
-	engine.OnCommandGroup([]string{"来点色图", "setu"},
-		zero.SuperUserPermission).
+	engine.OnFullMatch("/setu", zero.SuperUserPermission).
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			imgB64, err := getSetu()
@@ -39,6 +45,19 @@ func init() {
 			m := message.Image("base64://" + imgB64)
 			if id := ctx.Send(m).ID(); id == 0 {
 				ctx.Send("ERROR: 可能被风控或下载图片用时过长，请耐心等待")
+			}
+		})
+	engine.OnFullMatch("setu", zero.SuperUserPermission).SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			dir := localSetu[rand.Int()%len(localSetu)]
+			imgB64, err := getLocalSetu(dir)
+			if err != nil {
+				ctx.Send("读取本地图片失败了，请查阅后台日志。")
+				return
+			}
+			m := message.Image("base64://" + imgB64)
+			if id := ctx.Send(m).ID(); id == 0 {
+				ctx.Send("ERROR: 可能被风控或读取图片用时过长，请耐心等待")
 			}
 		})
 	engine.UseMidHandler(common.DefaultSpeedLimit)
@@ -63,4 +82,26 @@ func getSetu() (string, error) {
 	imgB64 := b64.StdEncoding.EncodeToString(imgData)
 	log.Debugln("[setu]", "imgB64 length:", len(imgB64))
 	return imgB64, nil
+}
+
+func getLocalSetu(dir string) (string, error) {
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		log.Errorln("[setu]", fmt.Sprintf("Fail to read dir %s", dir))
+		return "", err
+	}
+	imgFile := files[rand.Intn(len(files))]
+	// 检测是否读到文件夹，如果是则重试三次，否则报错
+	for i := 0; i < 3 && imgFile.IsDir(); i++ {
+		imgFile = files[rand.Intn(len(files))]
+	}
+	if imgFile.IsDir() {
+		return "", fmt.Errorf("Fail to get a file in dir %s", dir)
+	}
+	imgBytes, err := os.ReadFile(path.Join(dir, imgFile.Name()))
+	if err != nil {
+		log.Errorln("[setu]", fmt.Sprintf("Fail to read img file %s", imgFile.Name()), err)
+		return "", err
+	}
+	return b64.StdEncoding.EncodeToString(imgBytes), nil
 }
