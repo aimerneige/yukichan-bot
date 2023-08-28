@@ -61,7 +61,7 @@ make run
 - 支付宝到账 114514
 
 </details>
-<details><summary>🚧 bilibili 哔哩哔哩相关功能</summary>
+<details><summary>✅ bilibili 哔哩哔哩相关功能</summary>
 
 > 解析群内 bilibili 链接
 
