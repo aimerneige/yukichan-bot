@@ -1,5 +1,0 @@
-package bilibili
-
-func init() {
-
-}
