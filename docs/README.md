@@ -63,7 +63,7 @@ make run
 </details>
 <details><summary>🚧 bilibili 哔哩哔哩相关功能</summary>
 
-> 🚧🚧 施工中 🚧🚧
+> 解析群内 bilibili 链接
 
 </details>
 <details><summary>✅ blacklist 黑名单</summary>
