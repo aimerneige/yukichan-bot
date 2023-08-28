@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/aimerneige/yukichan-bot/internal/config"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
@@ -17,9 +16,10 @@ var cheeseData []byte
 //go:embed assets/help.txt
 var helpString string
 
+const sqliteDBFile = "./data/chess/chess.db"
+
 func init() {
-	dbFilePath := config.GlobalConfig.GetString("data.chess")
-	database.InitDatabase(dbFilePath)
+	database.InitDatabase(sqliteDBFile)
 	engine := zero.New()
 	engine.OnFullMatchGroup([]string{"下棋", "chess"}, zero.OnlyGroup).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {

@@ -1,14 +1,6 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-)
-
-var GlobalConfig *Config
-
-type Config struct {
-	*viper.Viper
-}
+var Conf *Config
 
 type CommonConfig struct {
 	WSServer      string   `yaml:"ws_server"`
@@ -18,29 +10,6 @@ type CommonConfig struct {
 	SuperUsers    []int64  `yaml:"super_users"`
 }
 
-func InitConfig(configFilePath string) error {
-	GlobalConfig = &Config{
-		viper.New(),
-	}
-	GlobalConfig.SetConfigFile(configFilePath)
-	return GlobalConfig.ReadInConfig()
-}
-
-func ReadCommonConfig() *CommonConfig {
-	c := GlobalConfig.AllSettings()["common"]
-	if common, ok := c.(CommonConfig); !ok {
-		return GetDefaultCommonConfig()
-	} else {
-		return &common
-	}
-}
-
-func GetDefaultCommonConfig() *CommonConfig {
-	return &CommonConfig{
-		WSServer:      "ws://127.0.0.1:6701",
-		WSToken:       "",
-		NickName:      []string{"ゆき酱"},
-		CommandPrefix: "/",
-		SuperUsers:    []int64{1227427929},
-	}
+type Config struct {
+	Common CommonConfig `yaml:"common"`
 }

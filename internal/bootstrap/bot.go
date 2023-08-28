@@ -23,7 +23,7 @@ import (
 )
 
 func StartBot() {
-	common := config.ReadCommonConfig()
+	common := config.Conf.Common
 	zero.RunAndBlock(&zero.Config{
 		NickName:      common.NickName,
 		CommandPrefix: common.CommandPrefix,

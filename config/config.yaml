@@ -6,11 +6,3 @@ common:
   command_prefix: "/"
   super_users:
     - 1227427929
-config:
-  seturepo: "./config/seturepo.yaml"
-data:
-  chess: "./data/chess/chess.db"
-  bilibili: "./data/bilibili/bilibili.db"
-  blacklist: "./data/blacklist/blacklist.db"
-temp:
-  chess: "./temp/chess"
