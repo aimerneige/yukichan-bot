@@ -7,7 +7,6 @@ import (
 
 	"github.com/aimerneige/yukichan-bot/internal/config"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
-	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/service"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
 )
@@ -19,15 +18,15 @@ var cheeseData []byte
 var helpString string
 
 func init() {
-	sqliteDatabase := database.SqliteDatabase{FilePath: config.Conf.DataFile["chess"]}
-	database.InitDatabase(sqliteDatabase)
+	dbFilePath := config.GlobalConfig.GetString("data.chess")
+	database.InitDatabase(dbFilePath)
 	engine := zero.New()
 	engine.OnFullMatchGroup([]string{"下棋", "chess"}, zero.OnlyGroup).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Game(groupCode, userUin, userName); len(replyMessage) >= 1 {
+			if replyMessage := Game(groupCode, userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -35,7 +34,7 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Resign(groupCode, userUin); len(replyMessage) >= 1 {
+			if replyMessage := Resign(groupCode, userUin); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -43,14 +42,14 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Draw(groupCode, userUin); len(replyMessage) >= 1 {
+			if replyMessage := Draw(groupCode, userUin); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
 	engine.OnFullMatchGroup([]string{"中断", "abort"}, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Abort(groupCode); len(replyMessage) >= 1 {
+			if replyMessage := Abort(groupCode); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -59,7 +58,7 @@ func init() {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
 			groupCode := ctx.Event.GroupID
-			if replyMessage := service.Blindfold(groupCode, userUin, userName); len(replyMessage) >= 1 {
+			if replyMessage := Blindfold(groupCode, userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -70,13 +69,13 @@ func init() {
 			userMsgStr := ctx.Event.Message.ExtractPlainText()
 			userMsgStr = strings.Replace(userMsgStr, "！", "!", 1)
 			moveStr := userMsgStr[1:]
-			if replyMessage := service.Play(userUin, groupCode, moveStr); len(replyMessage) >= 1 {
+			if replyMessage := Play(userUin, groupCode, moveStr); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
 	engine.OnFullMatchGroup([]string{"排行榜", "ranking"}).SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
-			if replyMessage := service.Ranking(); len(replyMessage) >= 1 {
+			if replyMessage := Ranking(); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
@@ -84,7 +83,7 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
-			if replyMessage := service.Rate(userUin, userName); len(replyMessage) >= 1 {
+			if replyMessage := Rate(userUin, userName); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})

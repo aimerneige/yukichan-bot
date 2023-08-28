@@ -1,4 +1,4 @@
-package service
+package chess
 
 import (
 	_ "embed"
@@ -10,7 +10,8 @@ import (
 	"time"
 
 	"github.com/aimerneige/yukichan-bot/internal/config"
-	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
+	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/elo"
+	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/service"
 	"github.com/notnil/chess"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -89,7 +90,7 @@ func Draw(groupCode, senderUin int64) message.Message {
 			chessString := getChessString(room)
 			eloString := ""
 			if len(room.chessGame.Moves()) > 4 {
-				dbService := NewDBService(database.GetDB())
+				dbService := service.NewDBService()
 				if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 					log.Errorln("[chess]", "Fail to create PGN.", err)
 				}
@@ -144,7 +145,7 @@ func Resign(groupCode, senderUin int64) message.Message {
 			chessString := getChessString(room)
 			eloString := ""
 			if len(room.chessGame.Moves()) > 4 {
-				dbService := NewDBService(database.GetDB())
+				dbService := service.NewDBService()
 				if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 					log.Errorln("[chess]", "Fail to create PGN.", err)
 				}
@@ -284,7 +285,7 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			eloString := ""
 			// 若走子次数超过 4 认为是有效对局，存入数据库
 			if len(room.chessGame.Moves()) > 4 {
-				dbService := NewDBService(database.GetDB())
+				dbService := service.NewDBService()
 				if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 					log.Errorln("[chess]", "Fail to create PGN.", err)
 				}
@@ -334,7 +335,7 @@ func Ranking() message.Message {
 
 // Rate 获取等级分
 func Rate(senderUin int64, senderName string) message.Message {
-	dbService := NewDBService(database.GetDB())
+	dbService := service.NewDBService()
 	rate, err := dbService.GetELORateByUin(senderUin)
 	if err == gorm.ErrRecordNotFound {
 		return simpleText("没有查找到等级分信息。请至少进行一局对局。")
@@ -417,7 +418,7 @@ func abortGame(groupCode int64, hint string) message.Message {
 	room.chessGame.Draw(chess.DrawOffer)
 	chessString := getChessString(room)
 	if len(room.chessGame.Moves()) > 4 {
-		dbService := NewDBService(database.GetDB())
+		dbService := service.NewDBService()
 		if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 			log.Errorln("[chess]", "Fail to create PGN.", err)
 		}
@@ -445,7 +446,7 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 		} else {
 			uciStr = "None"
 		}
-		tempFileDir := config.Conf.TempDir["chess"]
+		tempFileDir := config.GlobalConfig.GetString("temp.chess")
 		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.svg", groupCode))
 		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.png", groupCode))
 		// 调用 python 脚本生成 svg 文件
@@ -479,7 +480,7 @@ func getELOString(room chessRoom, whiteScore, blackScore float64) (string, error
 		return "", nil
 	}
 	eloString := "玩家等级分：\n"
-	dbService := NewDBService(database.GetDB())
+	dbService := service.NewDBService()
 	if err := updateELORate(room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName, whiteScore, blackScore, dbService); err != nil {
 		eloString += "发生错误，无法更新等级分。"
 		return eloString, err
@@ -495,7 +496,7 @@ func getELOString(room chessRoom, whiteScore, blackScore float64) (string, error
 
 // getRankingString 获取等级分排行榜的文本内容
 func getRankingString() (string, error) {
-	dbService := NewDBService(database.GetDB())
+	dbService := service.NewDBService()
 	eloList, err := dbService.GetHighestRateList()
 	if err != nil {
 		return "", err
@@ -524,7 +525,7 @@ func errorText(errMsg string) message.Message {
 
 // updateELORate 更新 elo 等级分
 // 当数据库中没有玩家的等级分信息时，自动新建一条记录
-func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteScore, blackScore float64, dbService *DBService) error {
+func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteScore, blackScore float64, dbService *service.DBService) error {
 	whiteRate, err := dbService.GetELORateByUin(whiteUin)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
@@ -547,7 +548,7 @@ func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteS
 		}
 		blackRate = eloDefault
 	}
-	whiteRate, blackRate = CalculateNewRate(whiteRate, blackRate, whiteScore, blackScore)
+	whiteRate, blackRate = elo.CalculateNewRate(whiteRate, blackRate, whiteScore, blackScore)
 	// 更新白棋玩家的 ELO 等级分
 	if err := dbService.UpdateELOByUin(whiteUin, whiteName, whiteRate); err != nil {
 		return err
@@ -562,7 +563,7 @@ func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteS
 
 // generateGIF 使用 PGN 字符串生成对局的 GIF
 func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
-	tempFileDir := config.Conf.TempDir["chess"]
+	tempFileDir := config.GlobalConfig.GetString("temp.chess")
 	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, fmt.Sprintf("%d", groupCode)).Run(); err != nil {
 		log.Debugln("[chess]", "python", " ", "-c", " ", "python_sript_pgn2gif", " ", pgnStr, " ", tempFileDir, " ", fmt.Sprintf("%d", groupCode))
 		return "", "生成 gif 时发生错误", err
@@ -590,7 +591,7 @@ func getChessString(room chessRoom) string {
 }
 
 // getELORate 获取玩家的 ELO 等级分
-func getELORate(whiteUin, blackUin int64, dbService *DBService) (whiteRate int, blackRate int, err error) {
+func getELORate(whiteUin, blackUin int64, dbService *service.DBService) (whiteRate int, blackRate int, err error) {
 	whiteRate, err = dbService.GetELORateByUin(whiteUin)
 	if err != nil {
 		return

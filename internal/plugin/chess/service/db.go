@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database/model"
 	"gorm.io/gorm"
 )
@@ -11,9 +12,9 @@ type DBService struct {
 }
 
 // NewDBService 创建数据库服务
-func NewDBService(db *gorm.DB) *DBService {
+func NewDBService() *DBService {
 	return &DBService{
-		db: db,
+		db: database.GetDB(),
 	}
 }
 

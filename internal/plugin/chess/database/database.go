@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database/model"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -14,11 +15,12 @@ type DBInterface interface {
 }
 
 // InitDatabase init database
-func InitDatabase(dbi DBInterface) {
-	db, err := dbi.InitDB(
-		&model.ELO{},
-		&model.PGN{},
-	)
+func InitDatabase(filePath string) {
+	db, err := gorm.Open(sqlite.Open(filePath), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&model.ELO{}, &model.PGN{})
 	if err != nil {
 		panic(err)
 	}

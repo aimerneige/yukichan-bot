@@ -1,4 +1,4 @@
-package service
+package elo
 
 import (
 	"math"
