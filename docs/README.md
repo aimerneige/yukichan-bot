@@ -66,7 +66,7 @@ make run
 > 🚧🚧 施工中 🚧🚧
 
 </details>
-<details><summary>🚧 blacklist 黑名单</summary>
+<details><summary>✅ blacklist 黑名单</summary>
 
 > 拒绝为被加入黑名单的用户提供服务
 
