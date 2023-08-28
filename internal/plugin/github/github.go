@@ -18,7 +18,9 @@ const (
 )
 
 func init() {
-	zero.OnPrefix("https://github.com/").SetBlock(true).
+	zero.OnPrefix("https://github.com/").
+		SetPriority(8).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			repoInfo := ctx.Event.Message.ExtractPlainText()[19:]
 			// 去除域名后内容过短，忽略消息

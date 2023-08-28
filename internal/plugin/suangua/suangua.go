@@ -23,7 +23,9 @@ var guaImages embed.FS
 var guaResultJSONData []byte
 
 func init() {
-	zero.OnPrefix("算卦").SetBlock(true).
+	zero.OnPrefix("算卦").
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
 			things := strings.TrimSpace(args)

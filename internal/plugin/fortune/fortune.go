@@ -10,7 +10,9 @@ import (
 )
 
 func init() {
-	zero.OnPrefix("求签").SetBlock(true).
+	zero.OnPrefix("求签").
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
 			things := strings.TrimSpace(args)

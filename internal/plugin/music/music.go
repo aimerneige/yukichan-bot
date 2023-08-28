@@ -14,7 +14,9 @@ import (
 func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
-	engine.OnPrefixGroup([]string{"点歌", "music"}).SetBlock(true).
+	engine.OnPrefixGroup([]string{"点歌", "music"}).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
 			if args == "" {

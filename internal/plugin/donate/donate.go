@@ -17,6 +17,8 @@ var wechat []byte
 
 func init() {
 	zero.OnCommandGroup([]string{"捐赠", "donate"}).
+		SetPriority(4).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			alipayB64 := b64.StdEncoding.EncodeToString(alipay)
 			wechatB64 := b64.StdEncoding.EncodeToString(wechat)

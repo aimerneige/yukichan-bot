@@ -20,7 +20,9 @@ const (
 )
 
 func init() {
-	zero.OnPrefixGroup([]string{"支付宝到账", "alipay"}).SetBlock(true).
+	zero.OnPrefixGroup([]string{"支付宝到账", "alipay"}).
+		SetPriority(8).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
 			if moneyCount, err := strconv.ParseFloat(strings.TrimSpace(args), 64); err == nil && moneyCount > 0 {

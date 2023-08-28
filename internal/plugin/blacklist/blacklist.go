@@ -25,5 +25,7 @@ func init() {
 		logrus.Errorln("[blacklist]", "Fail to unmarshal config data", err)
 		return
 	}
-	zero.OnMessage(zero.CheckUser(config.List...)).SetPriority(1).SetBlock(true)
+	zero.OnMessage(zero.CheckUser(config.List...)).
+		SetPriority(1).
+		SetBlock(true)
 }

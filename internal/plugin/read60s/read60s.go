@@ -16,7 +16,9 @@ const (
 )
 
 func init() {
-	zero.OnFullMatchGroup([]string{"今日新闻", "早报", "60s"}).SetBlock(true).
+	zero.OnFullMatchGroup([]string{"今日新闻", "早报", "60s"}).
+		SetPriority(7).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			data, err := web.GetData(api)
 			if err != nil {

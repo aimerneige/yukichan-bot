@@ -15,7 +15,9 @@ var cxkBytes []byte
 
 func init() {
 	engine := zero.New()
-	engine.OnFullMatchGroup([]string{"掷硬币", "/coin"}).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"掷硬币", "/coin"}).
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			replyTextMessage := "掷出了正面。"
 			if (rand.Int() % 2) == 0 {
@@ -23,11 +25,15 @@ func init() {
 			}
 			ctx.SendChain(message.At(ctx.Event.UserID), message.Text(replyTextMessage))
 		})
-	engine.OnFullMatch("只因币").SetBlock(true).
+	engine.OnFullMatch("只因币").
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.SendChain(message.Record("base64://" + b64.StdEncoding.EncodeToString(cxkBytes)))
 		})
-	engine.OnFullMatchGroup([]string{"掷骰子", "/dice"}).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"掷骰子", "/dice"}).
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			replyTextMessage := fmt.Sprintf("掷出了 %d 点。", (rand.Int()%6)+1)
 			ctx.SendChain(message.At(ctx.Event.UserID), message.Text(replyTextMessage))

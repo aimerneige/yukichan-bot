@@ -28,7 +28,9 @@ type TextJSON struct {
 
 func init() {
 	engine := zero.New()
-	engine.OnPrefix("每日发癫").SetBlock(true).
+	engine.OnPrefix("每日发癫").
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			name := "小乌贼"
 			nameString := strings.TrimSpace(ctx.Event.Message.ExtractPlainText()[12:])
@@ -37,9 +39,12 @@ func init() {
 			}
 			ctx.Send(getFadianPost(name))
 		})
-	engine.OnFullMatchGroup([]string{"小作文", "发大病"}).SetBlock(true).Handle(func(ctx *zero.Ctx) {
-		ctx.Send(getFadianText())
-	})
+	engine.OnFullMatchGroup([]string{"小作文", "发大病"}).
+		SetPriority(6).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			ctx.Send(getFadianText())
+		})
 }
 
 func getFadianPost(name string) string {

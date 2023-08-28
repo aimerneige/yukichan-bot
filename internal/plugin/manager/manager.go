@@ -25,12 +25,16 @@ const (
 
 func init() {
 	engine := zero.New()
-	engine.OnFullMatch("群管帮助", zero.OnlyGroup).SetBlock(true).
+	engine.OnFullMatch("群管帮助", zero.OnlyGroup).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.Send(hint)
 		})
 	// 踢出群聊
-	engine.OnRegex(`^踢出群聊.*?(\d+)`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^踢出群聊.*?(\d+)`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.SetThisGroupKick(
 				math.Str2Int64(ctx.State["regex_matched"].([]string)[1]), // 被踢出群聊的人的qq
@@ -43,19 +47,25 @@ func init() {
 			ctx.SendChain(message.Text("残念~ " + nickname + " 被放逐"))
 		})
 	// 开启全体禁言
-	engine.OnRegex(`^开启全员禁言$`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^开启全员禁言$`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.SetThisGroupWholeBan(true)
 			ctx.SendChain(message.Text("全员自闭开始~"))
 		})
 	// 解除全员禁言
-	engine.OnRegex(`^解除全员禁言$`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^解除全员禁言$`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.SetThisGroupWholeBan(false)
 			ctx.SendChain(message.Text("全员自闭结束~"))
 		})
 	// 禁言
-	engine.OnRegex(`^禁言.*?(\d+).*?\s(\d+)(.*)`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^禁言.*?(\d+).*?\s(\d+)(.*)`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			duration := math.Str2Int64(ctx.State["regex_matched"].([]string)[2])
 			switch ctx.State["regex_matched"].([]string)[3] {
@@ -78,7 +88,9 @@ func init() {
 			ctx.SendChain(message.Text("小黑屋收留成功~"))
 		})
 	// 解除禁言
-	engine.OnRegex(`^解除禁言.*?(\d+)`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^解除禁言.*?(\d+)`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.SetThisGroupBan(
 				math.Str2Int64(ctx.State["regex_matched"].([]string)[1]), // 要解除禁言的人的qq
@@ -87,7 +99,9 @@ func init() {
 			ctx.SendChain(message.Text("小黑屋释放成功~"))
 		})
 	// 自闭禁言
-	engine.OnRegex(`^(我要自闭|禅定).*?(\d+)(.*)`, zero.OnlyGroup).SetBlock(true).
+	engine.OnRegex(`^(我要自闭|禅定).*?(\d+)(.*)`, zero.OnlyGroup).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			duration := math.Str2Int64(ctx.State["regex_matched"].([]string)[2])
 			switch ctx.State["regex_matched"].([]string)[3] {
@@ -110,7 +124,9 @@ func init() {
 			ctx.SendChain(message.Text("那我就不手下留情了~"))
 		})
 	// 修改名片
-	engine.OnRegex(`^修改名片.*?(\d+).+?\s*(.*)$`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^修改名片.*?(\d+).+?\s*(.*)$`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			if len(ctx.State["regex_matched"].([]string)[2]) > 60 {
 				ctx.SendChain(message.Text("名字太长啦！"))
@@ -123,7 +139,9 @@ func init() {
 			ctx.SendChain(message.Text("嗯！已经修改了"))
 		})
 	// 修改头衔
-	engine.OnRegex(`^修改头衔.*?(\d+).+?\s*(.*)$`, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnRegex(`^修改头衔.*?(\d+).+?\s*(.*)$`, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			sptitle := ctx.State["regex_matched"].([]string)[2]
 			if sptitle == "" {
@@ -140,7 +158,9 @@ func init() {
 			ctx.SendChain(message.Text("嗯！已经修改了"))
 		})
 	// 申请头衔
-	engine.OnRegex(`^申请头衔\s*(.*)$`, zero.OnlyGroup).SetBlock(true).
+	engine.OnRegex(`^申请头衔\s*(.*)$`, zero.OnlyGroup).
+		SetPriority(5).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			sptitle := ctx.State["regex_matched"].([]string)[1]
 			if sptitle == "" {

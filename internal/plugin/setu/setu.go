@@ -29,6 +29,7 @@ func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
 	engine.OnFullMatch("/setu", zero.SuperUserPermission).
+		SetPriority(8).
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			imgB64, err := getSetu()
@@ -47,7 +48,9 @@ func init() {
 				ctx.Send("ERROR: 可能被风控或下载图片用时过长，请耐心等待")
 			}
 		})
-	engine.OnFullMatch("setu", zero.SuperUserPermission).SetBlock(true).
+	engine.OnFullMatch("/seturepo", zero.SuperUserPermission).
+		SetPriority(6).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			dir := localSetu[rand.Int()%len(localSetu)]
 			imgB64, err := getLocalSetu(dir)

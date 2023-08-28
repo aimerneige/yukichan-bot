@@ -5,9 +5,11 @@
 package waifu
 
 import (
+	"encoding/base64"
 	"fmt"
 	"math/rand"
 
+	"github.com/FloatTech/floatbox/web"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
 )
@@ -17,8 +19,12 @@ const (
 )
 
 func init() {
-	zero.OnCommand("waifu").Handle(func(ctx *zero.Ctx) {
-		miku := rand.Intn(100000) + 1
-		ctx.SendChain(message.At(ctx.Event.UserID), message.Image(fmt.Sprintf(bed, miku)))
-	})
+	zero.OnCommand("waifu").
+		SetPriority(8).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			if data, err := web.GetData(fmt.Sprintf(bed, rand.Intn(100000)+1)); err == nil {
+				ctx.SendChain(message.At(ctx.Event.UserID), message.Image("base64://"+base64.StdEncoding.EncodeToString(data)))
+			}
+		})
 }

@@ -21,7 +21,9 @@ const sqliteDBFile = "./data/chess/chess.db"
 func init() {
 	database.InitDatabase(sqliteDBFile)
 	engine := zero.New()
-	engine.OnFullMatchGroup([]string{"下棋", "chess"}, zero.OnlyGroup).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"下棋", "chess"}, zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
@@ -30,7 +32,9 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"认输", "resign"}, zero.OnlyGroup).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"认输", "resign"}, zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
@@ -38,7 +42,9 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"和棋", "draw"}, zero.OnlyGroup).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"和棋", "draw"}, zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
@@ -46,14 +52,18 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"中断", "abort"}, zero.OnlyGroup, zero.AdminPermission).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"中断", "abort"}, zero.OnlyGroup, zero.AdminPermission).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			groupCode := ctx.Event.GroupID
 			if replyMessage := Abort(groupCode); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"盲棋", "blind"}, zero.OnlyGroup).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"盲棋", "blind"}, zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
@@ -62,7 +72,9 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnRegex("[!|！]([0-9]|[A-Z]|[a-z]|=|-)+", zero.OnlyGroup).SetBlock(true).
+	engine.OnRegex("[!|！]([0-9]|[A-Z]|[a-z]|=|-)+", zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
@@ -73,13 +85,17 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"排行榜", "ranking"}).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"排行榜", "ranking"}).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			if replyMessage := Ranking(); len(replyMessage) >= 1 {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"等级分", "rate"}).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"等级分", "rate"}).
+		SetPriority(2).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			userName := ctx.Event.Sender.NickName
@@ -87,13 +103,19 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnFullMatchGroup([]string{"帮助", "help"}, zero.OnlyGroup).SetBlock(true).Handle(func(ctx *zero.Ctx) {
-		ctx.Send(helpString)
-	})
-	engine.OnFullMatch("cheese").SetBlock(true).Handle(func(ctx *zero.Ctx) {
-		ctx.SendChain(
-			message.Text("Chess Cheese Cheese Chess"),
-			message.Image("base64://"+base64.StdEncoding.EncodeToString(cheeseData)),
-		)
-	})
+	engine.OnFullMatchGroup([]string{"帮助", "help"}, zero.OnlyGroup).
+		SetPriority(2).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			ctx.Send(helpString)
+		})
+	engine.OnFullMatch("cheese").
+		SetPriority(2).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			ctx.SendChain(
+				message.Text("Chess Cheese Cheese Chess"),
+				message.Image("base64://"+base64.StdEncoding.EncodeToString(cheeseData)),
+			)
+		})
 }

@@ -29,21 +29,29 @@ func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
 
-	engine.OnFullMatchGroup([]string{"塔罗", "塔罗牌", "tarot"}).SetBlock(true).
+	engine.OnFullMatchGroup([]string{"塔罗", "塔罗牌", "tarot"}).
+		SetPriority(7).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			helpText := message.Text("支持指令\n「运势预测」（单张牌预测运势）\n「塔罗占卜」（三张牌进行占卜）\n「抽塔罗牌 5」（抽取指定张数的塔罗牌）")
 			helpImage := message.Image("base64://" + b64.StdEncoding.EncodeToString(tarotCommandImg))
 			ctx.SendChain(helpText, helpImage)
 		})
-	engine.OnFullMatch("运势预测").SetBlock(true).
+	engine.OnFullMatch("运势预测").
+		SetPriority(7).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.Send(drawCard(1))
 		})
-	engine.OnFullMatch("塔罗占卜").SetBlock(true).
+	engine.OnFullMatch("塔罗占卜").
+		SetPriority(7).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.Send(drawCard(3))
 		})
-	engine.OnPrefix("抽塔罗牌").SetBlock(true).
+	engine.OnPrefix("抽塔罗牌").
+		SetPriority(7).
+		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
 			if args == "" {
