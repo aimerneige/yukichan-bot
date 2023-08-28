@@ -68,9 +68,7 @@ make run
 </details>
 <details><summary>🚧 blacklist 黑名单</summary>
 
-> 🚧🚧 施工中 🚧🚧
-> 
-> 拒绝为加入黑名单的用户提供服务
+> 拒绝为被加入黑名单的用户提供服务
 
 </details>
 <details><summary>✅ chess 国际象棋</summary>
