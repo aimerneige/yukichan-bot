@@ -34,11 +34,6 @@ make run
 
 更多信息请查阅 `Makefile`
 
-## 依赖项
-
-1. [python](https://www.python.org/downloads/)
-2. [python-chess](https://github.com/niklasf/python-chess)
-
 ## 如何使用
 
 本项目符合 [OneBot](https://github.com/howmanybots/onebot) 标准，可基于以下项目与机器人框架/平台进行交互
@@ -48,6 +43,35 @@ make run
 | [onebot-kotlin](https://github.com/yyuueexxiinngg/onebot-kotlin)            | [Mirai](https://github.com/mamoe/mirai)       | yyuueexxiinngg |
 | [oicq/http-api](https://github.com/takayama-lily/oicq/tree/master/http-api) | [OICQ](https://github.com/takayama-lily/oicq) | takayama       |
 
+## 如何部署
+
+```bash
+# 安装 GNU Make
+sudo apt install -y make
+# 安装 Go 1.21
+wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+export GO111MODULE=on
+export GOPROXY=https://goproxy.cn
+# 安装 Python
+sudo apt install -y python-is-python3 python3-pip	
+# 安装 pip 包
+pip install python-chess
+git clone https://github.com/dn1z/pgn2gif.git && cd pgn2gif && sudo python setup.py install
+# 安装 yukichan-bot
+git clone https://github.com/aimerneige/yukichan-bot
+# 编译 yukichan-bot
+cd yukichan-bot && make build
+# 安装 Inkscape 可选
+wget https://inkscape.org/gallery/item/42330/Inkscape-0e150ed-x86_64.AppImage
+chmod +x Inkscape-0e150ed-x86_64.AppImage
+sudo mv Inkscape-0e150ed-x86_64.AppImage /usr/bin/inkscape
+sudo add-apt-repository universe
+sudo apt install -y libfuse2
+# 启动项目
+make run
+```
 
 ## 插件及用法
 

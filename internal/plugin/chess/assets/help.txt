@@ -9,4 +9,5 @@
 查看等级分排行榜：「排行榜」(ranking)
 查看自己的等级分：「等级分」(rate)
 
-本项目使用 AGPL-3.0 协议授权，开源地址 https://github.com/aimerneige/MiraiChess
+本项目是使用 AGPL-3.0 开源协议授权的开源项目。
+开源地址及使用帮助 https://github.com/aimerneige/yukichan-bot

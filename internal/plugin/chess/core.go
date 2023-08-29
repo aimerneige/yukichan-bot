@@ -634,7 +634,7 @@ func cleanTempFiles(groupCode int64) error {
 // getChessString 获取 PGN 字符串
 func getChessString(room chessRoom) string {
 	game := room.chessGame
-	siteString := "[Site \"github.com/aimerneige/MiraiChess\"]\n"
+	siteString := "[Site \"github.com/aimerneige/yukichan-bot\"]\n"
 	dataString := fmt.Sprintf("[Date \"%s\"]\n", time.Now().Format("2006-01-02"))
 	whiteString := fmt.Sprintf("[White \"%s\"]\n", room.whiteName)
 	blackString := fmt.Sprintf("[Black \"%s\"]\n", room.blackName)
