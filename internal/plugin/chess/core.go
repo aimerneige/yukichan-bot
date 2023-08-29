@@ -27,9 +27,8 @@ var pythonScriptPGN2GIF string
 var instance *chessService
 
 const (
-	eloDefault   = 500
-	tempFileDir  = "./temp/chess"
-	inkscapePath = "./bin/inkscape"
+	eloDefault  = 500
+	tempFileDir = "./temp/chess"
 )
 
 type chessService struct {
@@ -454,10 +453,10 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 			log.Errorln("[chess]", "Unable to generate svg file.", err)
 			return "", false, "无法生成 svg 图片，请检查 python-chess 库是否被正确安装。"
 		}
-		// 调用 inkscape 将 svg 图片转化为 png 图片
-		if err := exec.Command(inkscapePath, "-w", "720", "-h", "720", svgFilePath, "-o", pngFilePath).Run(); err != nil {
+		// 将 svg 图片转化为 png 图片
+		if err := service.Svg2Png(svgFilePath, pngFilePath); err != nil {
 			log.Errorln("[chess]", "Unable to convert to png.", err)
-			return "", false, "无法生成 png 图片，请检查 inkscape 安装情况及其依赖 libfuse。"
+			return "", false, "无法生成 png 图片，请检查后台日志。"
 		}
 		// 尝试读取 png 图片
 		imgData, err := os.ReadFile(pngFilePath)

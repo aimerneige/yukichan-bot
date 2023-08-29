@@ -36,9 +36,6 @@
 ### build result ###
 bin/yukichan-bot-*
 
-### inkscape ###
-bin/inkscape
-
 ### database file ###
 data/chess/chess.db
 

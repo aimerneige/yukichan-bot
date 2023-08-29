@@ -8,7 +8,7 @@
 
   🚧🚧 施工中 🚧🚧
 
-  ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的 QQ 机器人。
+  ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的国际象棋聊天机器人。
 
   <img src="https://counter.seku.su/cmoe?name=YukiChan-Bot&theme=r34" /><br>
 
@@ -16,7 +16,11 @@
 
 > 本机器人主要用于自用，开发过程中没有考虑通用性，按照个人喜好加了很多彩蛋和私货，且部分功能参考了社区内的其他机器人，如果您想要一个通用且功能更加完善的机器人，推荐查阅 [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin)，本仓库的原创插件也会尽量同步更新到这个仓库。
 
-## How to build
+## Star History
+
+[![Star Trend](https://api.star-history.com/svg?repos=aimerneige/yukichan-bot&type=Timeline)](https://seladb.github.io/StarTrack-js/#/preload?r=aimerneige,yukichan-bot)
+
+## 如何编译
 
 本项目使用 Makefile 管理编译流程，使用如下指令即可快速编译可执行文件：
 
@@ -32,13 +36,12 @@ make run
 
 更多信息请查阅 `Makefile`
 
-## Dependency
+## 依赖项
 
-1. [inkscape](https://inkscape.org/release/)
-2. [python](https://www.python.org/downloads/)
-3. [python-chess](https://github.com/niklasf/python-chess)
+1. [python](https://www.python.org/downloads/)
+2. [python-chess](https://github.com/niklasf/python-chess)
 
-## How to use
+## 如何使用
 
 本项目符合 [OneBot](https://github.com/howmanybots/onebot) 标准，可基于以下项目与机器人框架/平台进行交互
 | 项目地址                                                                    | 平台                                          | 核心作者       |
@@ -47,11 +50,8 @@ make run
 | [onebot-kotlin](https://github.com/yyuueexxiinngg/onebot-kotlin)            | [Mirai](https://github.com/mamoe/mirai)       | yyuueexxiinngg |
 | [oicq/http-api](https://github.com/takayama-lily/oicq/tree/master/http-api) | [OICQ](https://github.com/takayama-lily/oicq) | takayama       |
 
-## Star History
 
-[![Star Trend](https://api.star-history.com/svg?repos=aimerneige/yukichan-bot&type=Timeline)](https://seladb.github.io/StarTrack-js/#/preload?r=aimerneige,yukichan-bot)
-
-## Plugins
+## 插件及用法
 
 <details>
 <summary>点击展开查看插件及其用法</summary>
@@ -159,23 +159,12 @@ make run
 </details>
 </details>
 
-## Q&A
+## 常见问题
 
 ### 是否会支持群内多盘对局同时进行
 
 每个群内同时只能存在一盘对局，如果有多盘对局同时进行的需求可以 fork 之后自己改。\
 本项目主要是希望提供一个在群内下棋的环境，重要的是大家一起围观、交流和讨论棋局，而不是单纯实现对局。太多的对局同时进行不仅会导致群消息过多炸群，而且也不利于交流。如果只是需要下棋，chess.com 的邀请链接完全可以创建无限的棋局。<sub>~绝对不是开发者懒得写~</sub>
-
-### 无法生成 PNG
-
-您的发行版无法运行 AppImage 封装的 Inkscape，常见于 Ubuntu。一般地，使用下面的指令安装 `libfuse2` 即可。（仅 Ubuntu）
-
-```bash
-sudo add-apt-repository universe
-sudo apt install libfuse2
-```
-
-有任何疑问请参考 https://github.com/AppImage/AppImageKit/wiki/FUSE#install-fuse
 
 ## 交流群
 
