@@ -114,7 +114,7 @@ func Draw(groupCode, senderUin int64) message.Message {
 			} else {
 				replyMsg = append(replyMsg, message.Image("base64://"+gif))
 			}
-			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+			if err := cleanTempFiles(groupCode); err != nil {
 				log.Errorln("[chess]", "Fail to clean temp files", err)
 			}
 			delete(instance.gameRooms, groupCode)
@@ -179,7 +179,7 @@ func Resign(groupCode, senderUin int64) message.Message {
 			} else {
 				replyMsg = append(replyMsg, message.Image("base64://"+gif))
 			}
-			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+			if err := cleanTempFiles(groupCode); err != nil {
 				log.Errorln("[chess]", "Fail to clean temp files", err)
 			}
 			delete(instance.gameRooms, groupCode)
@@ -246,7 +246,7 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			} else {
 				replyMsg = append(replyMsg, message.Image("base64://"+gif))
 			}
-			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+			if err := cleanTempFiles(groupCode); err != nil {
 				log.Errorln("[chess]", "Fail to clean temp files", err)
 			}
 			delete(instance.gameRooms, groupCode)
@@ -319,7 +319,7 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			} else {
 				replyMsg = append(replyMsg, message.Image("base64://"+gif))
 			}
-			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+			if err := cleanTempFiles(groupCode); err != nil {
 				log.Errorln("[chess]", "Fail to clean temp files", err)
 			}
 			delete(instance.gameRooms, groupCode)
@@ -441,7 +441,7 @@ func abortGame(groupCode int64, hint string) message.Message {
 			log.Errorln("[chess]", "Fail to create PGN.", err)
 		}
 	}
-	if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+	if err := cleanTempFiles(groupCode); err != nil {
 		log.Errorln("[chess]", "Fail to clean temp files", err)
 	}
 	delete(instance.gameRooms, groupCode)
@@ -467,8 +467,8 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 		} else {
 			uciStr = "None"
 		}
-		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.svg", groupCode, len(moves)))
-		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.png", groupCode, len(moves)))
+		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.svg", groupCode))
+		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.png", groupCode))
 		// 调用 python 脚本生成 svg 文件
 		if err := exec.Command("python", "-c", pythonScriptBoard2SVG, room.chessGame.FEN(), svgFilePath, uciStr).Run(); err != nil {
 			commandStr := strings.Join([]string{"python", "-c", "pythonScriptBoard2SVG", room.chessGame.FEN(), svgFilePath, uciStr}, " ")
@@ -610,16 +610,14 @@ func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
 	return gifB64, "", err
 }
 
-func cleanTempFiles(groupCode int64, movesLength int) error {
-	for i := 0; i < movesLength+1; i++ {
-		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.svg", groupCode, i))
-		if err := os.Remove(svgFilePath); err != nil {
-			return err
-		}
-		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.png", groupCode, i))
-		if err := os.Remove(pngFilePath); err != nil {
-			return err
-		}
+func cleanTempFiles(groupCode int64) error {
+	svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.svg", groupCode))
+	if err := os.Remove(svgFilePath); err != nil {
+		return err
+	}
+	pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.png", groupCode))
+	if err := os.Remove(pngFilePath); err != nil {
+		return err
 	}
 	gifFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.gif", groupCode))
 	if err := os.Remove(gifFilePath); err != nil {
