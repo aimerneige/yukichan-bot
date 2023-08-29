@@ -55,7 +55,7 @@ export PATH=$PATH:/usr/local/go/bin
 export GO111MODULE=on
 export GOPROXY=https://goproxy.cn
 # 安装 Python
-sudo apt install -y python-is-python3 python3-pip	
+sudo apt install -y python-is-python3 python3-pip
 # 安装 pip 包
 pip install python-chess
 git clone https://github.com/dn1z/pgn2gif.git && cd pgn2gif && sudo python setup.py install
