@@ -6,7 +6,7 @@ import "github.com/aimerneige/yukichan-bot/internal/bootstrap"
 // See the Makefile for more information.
 var (
 	ConfPath   string = "./config/application.yaml"
-	DebugLevel string = "info"
+	DebugLevel string = "debug"
 )
 
 func main() {

@@ -42,3 +42,4 @@ data/chess/chess.db
 ### temp files ###
 temp/chess/*.svg
 temp/chess/*.png
+temp/chess/*.pgn

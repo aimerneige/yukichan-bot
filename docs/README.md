@@ -6,9 +6,7 @@
 
   [![GitHub](https://img.shields.io/github/license/aimerneige/yukichan-bot)](https://raw.githubusercontent.com/aimerneige/yukichan-bot/main/LICENSE)
 
-  🚧🚧 施工中 🚧🚧
-
-  ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的国际象棋聊天机器人。
+  ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的「**国际象棋**」聊天机器人。
 
   <img src="https://counter.seku.su/cmoe?name=YukiChan-Bot&theme=r34" /><br>
 

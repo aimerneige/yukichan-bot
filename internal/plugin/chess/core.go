@@ -7,8 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"time"
 
+	"github.com/aimerneige/yukichan-bot/internal/pkg/utils"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/elo"
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/service"
 	"github.com/notnil/chess"
@@ -85,7 +87,11 @@ func Draw(groupCode, senderUin int64) message.Message {
 			if room.drawPlayer == senderUin {
 				return textWithAt(senderUin, "已发起和棋请求，请勿重复发送。")
 			}
-			room.chessGame.Draw(chess.DrawOffer)
+			err := room.chessGame.Draw(chess.DrawOffer)
+			if err != nil {
+				logrus.Errorln("[chess]", "Fail to draw a game.", err)
+				return textWithAt(senderUin, "程序发生了错误，和棋失败，请反馈开发者修复 bug。")
+			}
 			chessString := getChessString(room)
 			eloString := ""
 			if len(room.chessGame.Moves()) > 4 {
@@ -101,14 +107,16 @@ func Draw(groupCode, senderUin int64) message.Message {
 				eloString = elo
 			}
 			replyMsg := textWithAt(senderUin, "接受和棋，游戏结束。\n"+eloString+chessString)
-			// TODO 替换 GIF 生成库
-			// gif, msg, err := generateGIF(groupCode, chessString)
-			// if err != nil {
-			// 	log.Errorln("[chess]", "Fail to generate GIF.", err)
-			// 	replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
-			// } else {
-			// 	replyMsg = append(replyMsg, message.Image("base64://"+gif))
-			// }
+			gif, msg, err := generateGIF(groupCode, chessString)
+			if err != nil {
+				log.Errorln("[chess]", "Fail to generate GIF.", err)
+				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
+			} else {
+				replyMsg = append(replyMsg, message.Image("base64://"+gif))
+			}
+			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+				log.Errorln("[chess]", "Fail to clean temp files", err)
+			}
 			delete(instance.gameRooms, groupCode)
 			return replyMsg
 		}
@@ -164,14 +172,16 @@ func Resign(groupCode, senderUin int64) message.Message {
 			if isAprilFoolsDay() {
 				replyMsg = textWithAt(senderUin, "对手认输，游戏结束，你胜利了。\n"+eloString+chessString)
 			}
-			// TODO 替换 GIF 生成库
-			// gif, msg, err := generateGIF(groupCode, chessString)
-			// if err != nil {
-			// 	log.Errorln("[chess]", "Fail to generate GIF.", err)
-			// 	replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
-			// } else {
-			// 	replyMsg = append(replyMsg, message.Image("base64://"+gif))
-			// }
+			gif, msg, err := generateGIF(groupCode, chessString)
+			if err != nil {
+				log.Errorln("[chess]", "Fail to generate GIF.", err)
+				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
+			} else {
+				replyMsg = append(replyMsg, message.Image("base64://"+gif))
+			}
+			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+				log.Errorln("[chess]", "Fail to clean temp files", err)
+			}
 			delete(instance.gameRooms, groupCode)
 			return replyMsg
 		}
@@ -236,6 +246,9 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			} else {
 				replyMsg = append(replyMsg, message.Image("base64://"+gif))
 			}
+			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+				log.Errorln("[chess]", "Fail to clean temp files", err)
+			}
 			delete(instance.gameRooms, groupCode)
 			return replyMsg
 		}
@@ -299,14 +312,16 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			if !room.isBlindfold {
 				replyMsg = append(replyMsg, boardImgEle)
 			}
-			// TODO 替换 GIF 生成库
-			// gif, msg, err := generateGIF(groupCode, chessString)
-			// if err != nil {
-			// 	log.Errorln("[chess]", "Fail to generate GIF.", err)
-			// 	replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
-			// } else {
-			// 	replyMsg = append(replyMsg, message.Image("base64://"+gif))
-			// }
+			gif, msg, err := generateGIF(groupCode, chessString)
+			if err != nil {
+				log.Errorln("[chess]", "Fail to generate GIF.", err)
+				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
+			} else {
+				replyMsg = append(replyMsg, message.Image("base64://"+gif))
+			}
+			if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+				log.Errorln("[chess]", "Fail to clean temp files", err)
+			}
 			delete(instance.gameRooms, groupCode)
 			return replyMsg
 		}
@@ -414,13 +429,20 @@ func createGame(isBlindfold bool, groupCode int64, senderUin int64, senderName s
 // abortGame 中断游戏
 func abortGame(groupCode int64, hint string) message.Message {
 	room := instance.gameRooms[groupCode]
-	room.chessGame.Draw(chess.DrawOffer)
+	err := room.chessGame.Draw(chess.DrawOffer)
+	if err != nil {
+		logrus.Errorln("[chess]", "Fail to draw a game.", err)
+		return simpleText("程序发生了错误，和棋失败，请反馈开发者修复 bug。")
+	}
 	chessString := getChessString(room)
 	if len(room.chessGame.Moves()) > 4 {
 		dbService := service.NewDBService()
 		if err := dbService.CreatePGN(chessString, room.whitePlayer, room.blackPlayer, room.whiteName, room.blackName); err != nil {
 			log.Errorln("[chess]", "Fail to create PGN.", err)
 		}
+	}
+	if err := cleanTempFiles(groupCode, len(room.chessGame.Moves())); err != nil {
+		log.Errorln("[chess]", "Fail to clean temp files", err)
 	}
 	delete(instance.gameRooms, groupCode)
 	msg := simpleText(hint)
@@ -445,18 +467,28 @@ func getBoardElement(groupCode int64) (string, bool, string) {
 		} else {
 			uciStr = "None"
 		}
-		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.svg", groupCode))
-		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.png", groupCode))
+		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.svg", groupCode, len(moves)))
+		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.png", groupCode, len(moves)))
 		// 调用 python 脚本生成 svg 文件
 		if err := exec.Command("python", "-c", pythonScriptBoard2SVG, room.chessGame.FEN(), svgFilePath, uciStr).Run(); err != nil {
-			log.Debugln("[chess]", "python", " ", "-c", " ", "python_script_board2svg", " ", room.chessGame.FEN(), " ", svgFilePath, " ", uciStr)
+			commandStr := strings.Join([]string{"python", "-c", "pythonScriptBoard2SVG", room.chessGame.FEN(), svgFilePath, uciStr}, " ")
+			log.Debugln("[chess]", commandStr)
 			log.Errorln("[chess]", "Unable to generate svg file.", err)
 			return "", false, "无法生成 svg 图片，请检查 python-chess 库是否被正确安装。"
 		}
 		// 将 svg 图片转化为 png 图片
-		if err := service.Svg2Png(svgFilePath, pngFilePath); err != nil {
-			log.Errorln("[chess]", "Unable to convert to png.", err)
-			return "", false, "无法生成 png 图片，请检查后台日志。"
+		if utils.CommandExists("inkscape") {
+			// 如果安装有 inkscape，调用 inkscape 将 svg 图片转化为 png 图片
+			if err := exec.Command("inkscape", "-w", "720", "-h", "720", svgFilePath, "-o", pngFilePath).Run(); err != nil {
+				log.Errorln("[chess]", "Unable to convert to png.", err)
+				return "", false, "无法生成 png 图片，请检查 inkscape 安装情况及其依赖 libfuse。"
+			}
+		} else {
+			// 未安装 inkscape 使用 go 的库生成
+			if err := service.Svg2Png(svgFilePath, pngFilePath); err != nil {
+				log.Errorln("[chess]", "Unable to convert to png.", err)
+				return "", false, "无法生成 png 图片，请检查后台日志。"
+			}
 		}
 		// 尝试读取 png 图片
 		imgData, err := os.ReadFile(pngFilePath)
@@ -559,10 +591,13 @@ func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteS
 	return nil
 }
 
-// generateGIF 使用 PGN 字符串生成对局的 GIF
+// generateGIF 读取对局图片，生成对局的 GIF
 func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
-	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, fmt.Sprintf("%d", groupCode)).Run(); err != nil {
-		log.Debugln("[chess]", "python", " ", "-c", " ", "python_sript_pgn2gif", " ", pgnStr, " ", tempFileDir, " ", fmt.Sprintf("%d", groupCode))
+	groupCodeStr := fmt.Sprintf("%d", groupCode)
+	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, groupCodeStr).Run(); err != nil {
+		commandStr := strings.Join([]string{"python", "-c", "pythonScriptBoard2GIF", pgnStr, tempFileDir, groupCodeStr}, " ")
+		log.Debugln("[chess]", commandStr)
+		log.Errorln("[chess]", "Fail to generate gif", err)
 		return "", "生成 gif 时发生错误", err
 	}
 	gifFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.gif", groupCode))
@@ -573,6 +608,29 @@ func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
 	}
 	gifB64 := base64.StdEncoding.EncodeToString(gifData)
 	return gifB64, "", err
+}
+
+func cleanTempFiles(groupCode int64, movesLength int) error {
+	for i := 0; i < movesLength+1; i++ {
+		svgFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.svg", groupCode, i))
+		if err := os.Remove(svgFilePath); err != nil {
+			return err
+		}
+		pngFilePath := path.Join(tempFileDir, fmt.Sprintf("%d_%d.png", groupCode, i))
+		if err := os.Remove(pngFilePath); err != nil {
+			return err
+		}
+	}
+	gifFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.gif", groupCode))
+	if err := os.Remove(gifFilePath); err != nil {
+		return err
+	}
+	pgnFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.pgn", groupCode))
+	if err := os.Remove(pgnFilePath); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // getChessString 获取 PGN 字符串

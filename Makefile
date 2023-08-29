@@ -5,7 +5,7 @@ GOOS					?= linux
 GOARCH				?= amd64
 VERSION				?= v0.0.1-alpha
 CONF_PATH			?= ./config/config.yaml
-DEBUG_LEVEL		?= debug
+DEBUG_LEVEL		?= info
 
 .PHONY: dev run release build fmt clean
 
