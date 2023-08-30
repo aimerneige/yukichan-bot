@@ -75,7 +75,7 @@ func init() {
 				ctx.Send(replyMessage)
 			}
 		})
-	engine.OnRegex("[!|！]([0-9]|[A-Z]|[a-z]|=|-)+", zero.OnlyGroup).
+	engine.OnRegex("^[!|！]([0-8]|[R|N|B|Q|K|O|a-h|x]|[-|=|+])+$", zero.OnlyGroup).
 		SetPriority(2).
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
@@ -130,7 +130,7 @@ func init() {
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
-			const PATTERN = "([0-9]|[A-Z]|[a-z]|.|\n)+"
+			const PATTERN = "([0-9]|[R|N|B|Q|K|O|a-h|x]|[.|\-|=|+|#|\ |\n])+"
 			reg := regexp.MustCompile(PATTERN)
 			if reg.FindString(args) == args {
 				userUin := ctx.Event.UserID
