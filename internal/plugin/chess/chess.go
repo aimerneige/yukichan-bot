@@ -81,7 +81,7 @@ func init() {
 		Handle(func(ctx *zero.Ctx) {
 			userUin := ctx.Event.UserID
 			groupCode := ctx.Event.GroupID
-			userMsgStr := ctx.Event.Message.ExtractPlainText()
+			userMsgStr := ctx.State["regex_matched"].([]string)[0]
 			userMsgStr = strings.Replace(userMsgStr, "！", "!", 1)
 			moveStr := userMsgStr[1:]
 			if replyMessage := Play(userUin, groupCode, moveStr); len(replyMessage) >= 1 {
@@ -130,7 +130,7 @@ func init() {
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			args := ctx.State["args"].(string)
-			const PATTERN = "([0-9]|[R|N|B|Q|K|O|a-h|x]|[.|\-|=|+|#|\ |\n])+"
+			const PATTERN = "([0-9]|[R|N|B|Q|K|O|a-h|x]|[-|.|=|+|#|/| |\n])+"
 			reg := regexp.MustCompile(PATTERN)
 			if reg.FindString(args) == args {
 				userUin := ctx.Event.UserID
