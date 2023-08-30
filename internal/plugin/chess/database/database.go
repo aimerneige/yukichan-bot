@@ -9,11 +9,6 @@ import (
 // DB is a global variable for database
 var DB *gorm.DB
 
-// DBInterface is an interface for database
-type DBInterface interface {
-	InitDB(migrateDst ...interface{}) (*gorm.DB, error)
-}
-
 // InitDatabase init database
 func InitDatabase(filePath string) {
 	db, err := gorm.Open(sqlite.Open(filePath), &gorm.Config{})
