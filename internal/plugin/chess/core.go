@@ -107,7 +107,8 @@ func Draw(groupCode, senderUin int64) message.Message {
 				eloString = elo
 			}
 			replyMsg := textWithAt(senderUin, "接受和棋，游戏结束。\n"+eloString+chessString)
-			gif, msg, err := generateGIF(groupCode, chessString)
+			cacheTempGIFName := fmt.Sprintf("%d", groupCode)
+			gif, msg, err := generateGIF(cacheTempGIFName, chessString)
 			if err != nil {
 				log.Errorln("[chess]", "Fail to generate GIF.", err)
 				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
@@ -172,7 +173,8 @@ func Resign(groupCode, senderUin int64) message.Message {
 			if isAprilFoolsDay() {
 				replyMsg = textWithAt(senderUin, "对手认输，游戏结束，你胜利了。\n"+eloString+chessString)
 			}
-			gif, msg, err := generateGIF(groupCode, chessString)
+			cacheTempGIFName := fmt.Sprintf("%d", groupCode)
+			gif, msg, err := generateGIF(cacheTempGIFName, chessString)
 			if err != nil {
 				log.Errorln("[chess]", "Fail to generate GIF.", err)
 				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
@@ -239,7 +241,8 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			room.chessGame.Resign(currentPlayerColor)
 			chessString := getChessString(room)
 			replyMsg := textWithAt(senderUin, "违例两次，游戏结束。\n"+chessString)
-			gif, msg, err := generateGIF(groupCode, chessString)
+			cacheTempGIFName := fmt.Sprintf("%d", groupCode)
+			gif, msg, err := generateGIF(cacheTempGIFName, chessString)
 			if err != nil {
 				log.Errorln("[chess]", "Fail to generate GIF.", err)
 				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
@@ -312,7 +315,8 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 			if !room.isBlindfold {
 				replyMsg = append(replyMsg, boardImgEle)
 			}
-			gif, msg, err := generateGIF(groupCode, chessString)
+			cacheTempGIFName := fmt.Sprintf("%d", groupCode)
+			gif, msg, err := generateGIF(cacheTempGIFName, chessString)
 			if err != nil {
 				log.Errorln("[chess]", "Fail to generate GIF.", err)
 				replyMsg = append(replyMsg, message.Text("\n\n[GIF - ERROR]\n"+msg))
@@ -359,6 +363,35 @@ func Rate(senderUin int64, senderName string) message.Message {
 		return simpleText("服务器错误，无法获取等级分信息。请联系开发者修 bug。\n反馈地址 https://github.com/aimerneige/yukichan-bot/issues\n")
 	}
 	return simpleText(fmt.Sprintf("玩家「%s」目前的等级分：%d", senderName, rate))
+}
+
+// CleanUserRate 清空用户等级分
+func CleanUserRate(senderUin int64) message.Message {
+	dbService := service.NewDBService()
+	err := dbService.CleanELOByUin(senderUin)
+	if err == gorm.ErrRecordNotFound {
+		return simpleText("没有查找到等级分信息。请检查用户 uid 是否正确。")
+	}
+	if err != nil {
+		logrus.Errorln("[chess]", "Fail to clean player rank.", err)
+		return simpleText("服务器错误，无法清空等级分。请联系开发者修 bug。\n反馈地址 https://github.com/aimerneige/yukichan-bot/issues\n")
+	}
+	return simpleText(fmt.Sprintf("已清空用户「%d」的等级分。", senderUin))
+}
+
+// GenerateGIF PGN 生成 GIF
+func GenerateGIF(senderUin int64, pgnStr string) message.Message {
+	cacheFileName := fmt.Sprintf("gen_%d", senderUin)
+	gif, msg, err := generateGIF(cacheFileName, pgnStr)
+	if err != nil {
+		log.Errorln("[chess]", "Fail to generate GIF.", err)
+		return simpleText("GIF 生成失败，错误信息：" + msg)
+	}
+	cacheTempGIFName := cacheFileName + ".gif"
+	cacheTempPGNName := cacheFileName + ".pgn"
+	os.Remove(path.Join(tempFileDir, cacheTempGIFName))
+	os.Remove(path.Join(tempFileDir, cacheTempPGNName))
+	return message.Message{message.Image("base64://" + gif)}
 }
 
 // createGame 创建游戏
@@ -592,15 +625,14 @@ func updateELORate(whiteUin, blackUin int64, whiteName, blackName string, whiteS
 }
 
 // generateGIF 读取对局图片，生成对局的 GIF
-func generateGIF(groupCode int64, pgnStr string) (string, string, error) {
-	groupCodeStr := fmt.Sprintf("%d", groupCode)
-	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, groupCodeStr).Run(); err != nil {
-		commandStr := strings.Join([]string{"python", "-c", "pythonScriptBoard2GIF", pgnStr, tempFileDir, groupCodeStr}, " ")
+func generateGIF(cacheGIFName, pgnStr string) (string, string, error) {
+	if err := exec.Command("python", "-c", pythonScriptPGN2GIF, pgnStr, tempFileDir, cacheGIFName).Run(); err != nil {
+		commandStr := strings.Join([]string{"python", "-c", "pythonScriptBoard2GIF", pgnStr, tempFileDir, cacheGIFName}, " ")
 		log.Debugln("[chess]", commandStr)
 		log.Errorln("[chess]", "Fail to generate gif", err)
 		return "", "生成 gif 时发生错误", err
 	}
-	gifFilePath := path.Join(tempFileDir, fmt.Sprintf("%d.gif", groupCode))
+	gifFilePath := path.Join(tempFileDir, cacheGIFName+".gif")
 	gifData, err := os.ReadFile(gifFilePath)
 	if err != nil {
 		log.Errorln("[chess]", fmt.Sprintf("Unable to read gif file in %s.", gifFilePath), err)

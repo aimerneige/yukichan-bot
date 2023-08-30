@@ -3,6 +3,9 @@ package chess
 import (
 	_ "embed"
 	"encoding/base64"
+	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/aimerneige/yukichan-bot/internal/plugin/chess/database"
@@ -108,6 +111,33 @@ func init() {
 		SetBlock(true).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.Send(helpString)
+		})
+	engine.OnPrefixGroup([]string{"清空等级分", ".clean.rate"}, zero.SuperUserPermission).
+		SetPriority(2).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			args := ctx.State["args"].(string)
+			if playerUin, err := strconv.ParseInt(strings.TrimSpace(args), 10, 64); err == nil && playerUin > 0 {
+				if replyMessage := CleanUserRate(playerUin); len(replyMessage) >= 1 {
+					ctx.Send(replyMessage)
+				}
+			} else {
+				ctx.Send(fmt.Sprintf("解析失败「%s」不是正确的 QQ 号。", args))
+			}
+		})
+	engine.OnPrefix("/pgn2gif").
+		SetPriority(2).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			args := ctx.State["args"].(string)
+			const PATTERN = "([0-9]|[A-Z]|[a-z]|.|\n)+"
+			reg := regexp.MustCompile(PATTERN)
+			if reg.FindString(args) == args {
+				userUin := ctx.Event.UserID
+				if replyMessage := GenerateGIF(userUin, args); len(replyMessage) >= 1 {
+					ctx.Send(replyMessage)
+				}
+			}
 		})
 	engine.OnFullMatch("cheese").
 		SetPriority(2).

@@ -53,6 +53,11 @@ func (s *DBService) UpdateELOByUin(uin int64, name string, rate int) error {
 	return s.db.Model(&model.ELO{}).Where("uin = ?", uin).Update("name", name).Update("rate", rate).Error
 }
 
+// CleanELOByUin 清空用户 ELO 等级分
+func (s *DBService) CleanELOByUin(uin int64) error {
+	return s.db.Model(&model.ELO{}).Where("uin = ?", uin).Update("rate", 100).Error
+}
+
 // CreatePGN 创建 PGN
 func (s *DBService) CreatePGN(data string, whiteUin int64, blackUin int64, whiteName string, blackName string) error {
 	return s.db.Create(&model.PGN{
