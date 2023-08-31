@@ -1,6 +1,7 @@
 package ytdlp
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -56,7 +57,15 @@ func init() {
 			}
 			ctx.Send("文件下载成功，正在上传，请稍候。")
 			fullVideoFilePath := path.Join(wd, videoFilePath)
-			ctx.UploadThisGroupFile(fullVideoFilePath, fileName, "")
+			resp := ctx.UploadThisGroupFile(fullVideoFilePath, fileName, "")
+			if resp.Status != "ok" {
+				respData, err := json.Marshal(resp)
+				errMsg := string(respData)
+				if err != nil {
+					errMsg = err.Error()
+				}
+				ctx.Send(fmt.Sprintln("文件上传失败。", errMsg))
+			}
 			os.Remove(videoFilePath)
 		})
 }
