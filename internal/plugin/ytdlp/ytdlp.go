@@ -44,7 +44,7 @@ func init() {
 				return
 			}
 			videoTitle := string(videoTitleInByte)
-			ctx.Send(fmt.Sprintf("视频标题：%s\n视频大小：%s\n即将开始下载视频，请稍候。", videoTitle, videoFileSize))
+			ctx.Send(fmt.Sprintf("视频标题：%s视频大小：%s即将开始下载视频，请稍候。", videoTitle, videoFileSize))
 			fileName := fmt.Sprintf("%d_%d.mp4", ctx.Event.Sender.ID, time.Now().Unix())
 			videoFilePath := path.Join(tempFileDir, fileName)
 			cmdDownload := exec.Command("yt-dlp", url, "-o", videoFilePath)
