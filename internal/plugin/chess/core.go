@@ -336,9 +336,9 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 		} else {
 			currentPlayer = room.blackPlayer
 		}
-		var replyMsg := textWithAt(currentPlayer, "对手已走子，游戏继续。")
+		replyMsg := textWithAt(currentPlayer, "对手已走子，游戏继续。")
 		if !room.isBlindfold {
-			replyMsg.append(boardImgEle)
+			replyMsg = append(replyMsg, boardImgEle)
 		}
 		return replyMsg
 	}
