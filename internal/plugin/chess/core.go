@@ -336,7 +336,11 @@ func Play(senderUin int64, groupCode int64, moveStr string) message.Message {
 		} else {
 			currentPlayer = room.blackPlayer
 		}
-		return append(textWithAt(currentPlayer, "对手已走子，游戏继续。"), boardImgEle)
+		var replyMsg := textWithAt(currentPlayer, "对手已走子，游戏继续。")
+		if !room.isBlindfold {
+			replyMsg.append(boardImgEle)
+		}
+		return replyMsg
 	}
 	return textWithAt(senderUin, "对局不存在，发送「下棋」或「chess」可创建对局。")
 }
