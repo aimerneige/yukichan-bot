@@ -1,10 +1,30 @@
 package web
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
 )
+
+func PostRequest(url string, bodyRaw string) ([]byte, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(bodyRaw)))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
 
 func GetRequest(url string, queryList [][]string) ([]byte, error) {
 	client := &http.Client{}
