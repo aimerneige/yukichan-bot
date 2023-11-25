@@ -5,6 +5,7 @@
   <h1>ゆき酱</h1>
 
   [![GitHub](https://img.shields.io/github/license/aimerneige/yukichan-bot)](https://raw.githubusercontent.com/aimerneige/yukichan-bot/main/LICENSE)
+	[![Man hours](https://img.shields.io/endpoint?url=https%3A%2F%2Fmanhours.aiursoft.cn%2Fr%2Fgithub.com%2Faimerneige%2Fyukichan-bot.json)](https://manhours.aiursoft.cn/)
 
   ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的「**国际象棋**」聊天机器人。
 
