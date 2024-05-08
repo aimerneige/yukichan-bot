@@ -34,8 +34,8 @@ func StartBot() {
 		CommandPrefix: common.CommandPrefix,
 		SuperUsers:    common.SuperUsers,
 		Driver: []zero.Driver{
-			// 反向 WS
-			driver.NewWebSocketServer(16, common.WSServer, common.WSToken),
+			// 正向 WS
+			driver.NewWebSocketClient(common.WSServer, common.WSToken),
 		},
 	}, nil)
 }
