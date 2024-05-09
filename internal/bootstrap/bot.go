@@ -13,7 +13,6 @@ import (
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/fadian"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/fortune"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/github"
-	_ "github.com/aimerneige/yukichan-bot/internal/plugin/glm"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/manager"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/match"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/music"
