@@ -19,6 +19,8 @@ import (
 	"github.com/wdvxdr1123/ZeroBot/message"
 )
 
+const DeckImgPath = "assets/deck"
+
 //go:embed assets/deck
 var deckEmbedFS embed.FS
 
@@ -76,7 +78,7 @@ func drawCard(number int) message.Message {
 	if (rand.Int() % 3) == 0 {
 		theme = "bilibili"
 	}
-	deckPath := path.Join("./assets/deck/", theme)
+	deckPath := path.Join(DeckImgPath, theme)
 	cardImages, err := fs.ReadDir(deckEmbedFS, deckPath)
 	if err != nil {
 		log.Errorln("[tarot]", "Fail to read card images.", err)
