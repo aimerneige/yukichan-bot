@@ -22,7 +22,6 @@ import (
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/suangua"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/tarot"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/waifu"
-	_ "github.com/aimerneige/yukichan-bot/internal/plugin/wangyiyun"
 	_ "github.com/aimerneige/yukichan-bot/internal/plugin/ytdlp"
 )
 
