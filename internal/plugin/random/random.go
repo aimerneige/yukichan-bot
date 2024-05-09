@@ -56,7 +56,6 @@ func init() {
 
 func drawCard(number int) message.Message {
 	cardImages, err := fs.ReadDir(cardEmbedFS, CardImgPath)
-	log.Errorln(cardImages)
 	if err != nil {
 		log.Errorln("[random]", "Fail to read card images", err)
 		return []message.MessageSegment{message.Text("发生错误，无法读取扑克图片")}
