@@ -138,6 +138,8 @@ make run
 - 掷硬币
 - /dice
 - 掷骰子
+- /card
+- 抽扑克
 
 </details>
 <details><summary>✅ read60s 每天 60 秒读懂世界</summary>
