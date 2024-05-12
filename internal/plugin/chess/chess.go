@@ -139,6 +139,19 @@ func init() {
 				}
 			}
 		})
+	engine.OnRegex("^https://lichess.org/([0-9]|[a-z]|[A-Z])+$").
+		SetPriority(2).
+		SetBlock(true).
+		Handle(func(ctx *zero.Ctx) {
+			senderUin := ctx.Event.Sender.ID
+			url := ctx.Event.Message.String()
+			replyMessage := ParseLichessLink(senderUin, url)
+			if replyMessage == nil {
+				return
+			}
+			messageID := ctx.Event.MessageID
+			ctx.Send(message.ReplyWithMessage(messageID, replyMessage...))
+		})
 	engine.OnFullMatch("cheese").
 		SetPriority(2).
 		SetBlock(true).

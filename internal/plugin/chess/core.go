@@ -4,9 +4,12 @@ import (
 	_ "embed"
 	"encoding/base64"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -398,6 +401,25 @@ func GenerateGIF(senderUin int64, pgnStr string) message.Message {
 	return message.Message{message.Image("base64://" + gif)}
 }
 
+func ParseLichessLink(senderUin int64, lichessUrl string) message.Message {
+	pgnStr, err := parseLichessPgn(lichessUrl)
+	if (err != nil) || (pgnStr == "") {
+		log.Errorln("[chess]", "Fail to parse lichess Url", err)
+		return nil
+	}
+	cacheFileName := fmt.Sprintf("gen_%d", senderUin)
+	gif, msg, err := generateGIF(cacheFileName, pgnStr)
+	if err != nil {
+		log.Errorln("[chess]", "Fail to generate GIF.", msg, err)
+		return nil
+	}
+	cacheTempGIFName := cacheFileName + ".gif"
+	cacheTempPGNName := cacheFileName + ".pgn"
+	os.Remove(path.Join(tempFileDir, cacheTempGIFName))
+	os.Remove(path.Join(tempFileDir, cacheTempPGNName))
+	return message.Message{message.Image("base64://" + gif)}
+}
+
 // createGame 创建游戏
 func createGame(isBlindfold bool, groupCode int64, senderUin int64, senderName string) message.Message {
 	if room, ok := instance.gameRooms[groupCode]; ok {
@@ -644,6 +666,31 @@ func generateGIF(cacheGIFName, pgnStr string) (string, string, error) {
 	}
 	gifB64 := base64.StdEncoding.EncodeToString(gifData)
 	return gifB64, "", err
+}
+
+func parseLichessPgn(url string) (string, error) {
+	var response *http.Response
+	response, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+	if response.StatusCode == http.StatusNotFound {
+		return "", nil
+	}
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	html := string(data)
+	r := regexp.MustCompile(`<div class="pgn">([\S\s]*?)</div>`)
+	matched := r.FindStringSubmatch(html)
+	if len(matched) != 2 {
+		return "", err
+	}
+	pgn := matched[1]
+	pgn = strings.Replace(pgn, "&quot;", "\"", -1)
+	return pgn, nil
 }
 
 func cleanTempFiles(groupCode int64) error {
