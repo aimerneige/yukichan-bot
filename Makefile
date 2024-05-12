@@ -1,11 +1,11 @@
-GO						:= go
-GO_SOURCES		:= $(shell find . -type f -name "*.go")
-TARGET_NAME		:= yukichan-bot
-GOOS					?= linux
-GOARCH				?= amd64
-VERSION				?= v1.0.0
-CONF_PATH			?= ./config/config.yaml
-DEBUG_LEVEL		?= info
+GO			:= go
+GO_SOURCES	:= $(shell find . -type f -name "*.go")
+TARGET_NAME	:= yukichan-bot
+GOOS		?= linux
+GOARCH		?= amd64
+VERSION		?= v1.0.0
+CONF_PATH	?= ./config/config.yaml
+DEBUG_LEVEL	?= info
 
 .PHONY: dev run release build fmt clean
 
