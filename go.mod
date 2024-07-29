@@ -6,6 +6,7 @@ require (
 	github.com/FloatTech/AnimeAPI v1.6.1-0.20230724165034-a3cf504fab92
 	github.com/FloatTech/floatbox v0.0.0-20230331064925-9af336a84944
 	github.com/disintegration/imaging v1.6.2
+	github.com/google/uuid v1.3.0
 	github.com/notnil/chess v1.9.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c
