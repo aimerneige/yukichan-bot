@@ -21,6 +21,8 @@ func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
 	engine.OnPrefix("加图").FirstPriority().SetBlock(true).Handle(handleImgSave)
+	engine.OnPrefix("创建图库", zero.OwnerPermission).SecondPriority().SetBlock(true).Handle(func(ctx *zero.Ctx) {})
+	engine.OnPrefix("来张").SecondPriority().SetBlock(true).Handle(func(ctx *zero.Ctx) {})
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
@@ -40,13 +42,10 @@ func handleImgSave(ctx *zero.Ctx) {
 	if msg[0].Type != "text" {
 		return
 	}
-	userSource := msg[0].Data["text"]
-	userTarget := strings.TrimSpace(userSource)
-	userTarget = strings.TrimPrefix(userTarget, "加图")
-	userTarget = strings.TrimSpace(userTarget)
-	userTarget = strings.ToLower(userTarget)
+	userTarget := parseUserTarget(msg[0].Data["text"])
 	dirTarget := toTargetDirName(userTarget)
 	if dirTarget == "" {
+		ctx.Send(fmt.Sprintf("图片库「%s」不存在！可联系机器人管理员创建。", userTarget))
 		return
 	}
 	imgList := []UserImage{}
@@ -60,6 +59,8 @@ func handleImgSave(ctx *zero.Ctx) {
 		}
 	}
 	if len(imgList) < 1 {
+		ctx.Send("请发送图片！")
+		// TODO
 		return
 	}
 	successCount := 0
@@ -73,7 +74,7 @@ func handleImgSave(ctx *zero.Ctx) {
 			failCount++
 		}
 	}
-	ctx.Send(fmt.Sprintf("任务完成，成功保存 %d 张图片，失败 %d 张", successCount, failCount))
+	ctx.Send(fmt.Sprintf("任务完成，已存入「%s」。成功保存 %d 张图片，失败 %d 张", dirTarget, successCount, failCount))
 }
 
 type UserImage struct {
@@ -106,6 +107,14 @@ func downloadImage(imgUrl, filePath string) bool {
 		return false
 	}
 	return true
+}
+
+func parseUserTarget(userSource string) string {
+	userTarget := strings.TrimSpace(userSource)
+	userTarget = strings.TrimPrefix(userTarget, "加图")
+	userTarget = strings.TrimSpace(userTarget)
+	userTarget = strings.ToLower(userTarget)
+	return userTarget
 }
 
 func toTargetDirName(s string) string {
