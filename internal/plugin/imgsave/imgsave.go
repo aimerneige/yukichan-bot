@@ -151,6 +151,7 @@ func handleRepoCreate(ctx *zero.Ctx) {
 	}
 	config.Repos = append(config.Repos, repoNameList)
 	updateConfigToDisk()
+	os.MkdirAll(path.Join(config.Rootdit, repoNameList[0]), 0755)
 	successMsg := fmt.Sprintf("成功创建图库「%s」", data)
 	ctx.Send(successMsg)
 }
