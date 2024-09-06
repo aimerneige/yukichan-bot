@@ -158,7 +158,7 @@ func handleBlacklistAdd(ctx *zero.Ctx) {
 	data := ctx.State["args"].(string)
 	uid, err := strconv.ParseInt(data, 10, 64)
 	if err != nil {
-		ctx.Send(fmt.Sprintf("解析失败，「%s」不是准确的 QQ 号。", data))
+		ctx.Send(fmt.Sprintf("解析失败，「%s」不是正确的 QQ 号。", data))
 		return
 	}
 	if inBlacklist(uid) {
