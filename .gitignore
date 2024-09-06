@@ -44,3 +44,6 @@ temp/chess/*.svg
 temp/chess/*.png
 temp/chess/*.pgn
 temp/ytdlp/*.mp4
+
+### imgsave ###
+data/imgsave/
