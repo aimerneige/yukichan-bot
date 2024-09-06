@@ -48,7 +48,7 @@ func init() {
 	engine.OnFullMatch("图库列表").ThirdPriority().SetBlock(true).Handle(handleRepoList)
 	engine.OnPrefix("创建图库", zero.SuperUserPermission).SecondPriority().SetBlock(true).Handle(handleRepoCreate)
 	engine.OnPrefix("图库加黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistAdd)
-	engine.OnPrefix("图库去黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
+	engine.OnPrefixGroup([]string{"图库删黑名单", "图库去黑名单"}, zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
@@ -158,11 +158,11 @@ func handleBlacklistAdd(ctx *zero.Ctx) {
 	data := ctx.State["args"].(string)
 	uid, err := strconv.ParseInt(data, 10, 64)
 	if err != nil {
-		ctx.Send(fmt.Sprintf("解析失败，「%s」不是正确的 QQ 号。", data))
+		ctx.Send(fmt.Sprintf("解析失败「%s」不是正确的 QQ 号。", data))
 		return
 	}
 	if inBlacklist(uid) {
-		ctx.Send(fmt.Sprintf("添加失败，「%d」已经在黑名单里了。", uid))
+		ctx.Send(fmt.Sprintf("添加失败「%d」已经在黑名单里了。", uid))
 		return
 	}
 	config.Blacklist = append(config.Blacklist, uid)
@@ -172,7 +172,20 @@ func handleBlacklistAdd(ctx *zero.Ctx) {
 
 func handleBlacklistDel(ctx *zero.Ctx) {
 	data := ctx.State["args"].(string)
-	ctx.Send(data)
+	uid, err := strconv.ParseInt(data, 10, 64)
+	if err != nil {
+		ctx.Send(fmt.Sprintf("解析失败「%s」不是正确的 QQ 号。", data))
+		return
+	}
+	for i, _uid := range config.Blacklist {
+		if _uid == uid {
+			config.Blacklist = append(config.Blacklist[:i], config.Blacklist[i+1:]...)
+			updateConfigToDisk()
+			ctx.Send(fmt.Sprintf("成功将「%d」移出黑名单。", uid))
+			return
+		}
+	}
+	ctx.Send(fmt.Sprintf("删除失败「%d」不在黑名单中。", uid))
 }
 
 type UserImage struct {
