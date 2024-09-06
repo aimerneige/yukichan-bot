@@ -48,7 +48,8 @@ func init() {
 	engine.OnFullMatch("图库列表").ThirdPriority().SetBlock(true).Handle(handleRepoList)
 	engine.OnPrefix("创建图库", zero.SuperUserPermission).SecondPriority().SetBlock(true).Handle(handleRepoCreate)
 	engine.OnPrefix("图库加黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistAdd)
-	engine.OnPrefixGroup([]string{"图库删黑名单", "图库去黑名单"}, zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
+	engine.OnPrefix("图库删黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
+	// TODO 图库去重
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
