@@ -1,6 +1,7 @@
 package imgsave
 
 import (
+	_ "embed"
 	"fmt"
 	"io"
 	"math/rand"
@@ -19,13 +20,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+//go:embed assets/help.txt
+var helpInfo string
+
 const (
 	configFilePath = "./config/imgsave.yaml"
 )
 
 type ImgsaveConfig struct {
 	Rootdit   string     `yaml:"rootdir"`
-	Repos     [][]string `yaml:"repos"`
+	Repos     [][]string `yaml:"repos,flow"`
 	Blacklist []int64    `yaml:"blacklist"`
 }
 
@@ -37,16 +41,15 @@ func init() {
 	engine := zero.New()
 	common.DefaultSingle.Apply(engine)
 	engine.OnPrefix("加图").FirstPriority().SetBlock(true).Handle(handleImgSave)
-	engine.OnPrefix("创建图库", zero.OwnerPermission).SecondPriority().SetBlock(true).Handle(handleRepoCreate)
 	engine.OnPrefix("来张").SecondPriority().SetBlock(true).Handle(handleImgGet)
+	engine.OnFullMatch("图库帮助").ThirdPriority().SetBlock(true).Handle(handleImgsaveHelp)
+	engine.OnPrefix("创建图库", zero.SuperUserPermission).SecondPriority().SetBlock(true).Handle(handleRepoCreate)
+	engine.OnPrefix("图库加黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistAdd)
+	engine.OnPrefix("图库去黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
 	engine.UseMidHandler(common.DefaultSpeedLimit)
 }
 
 func handleImgSave(ctx *zero.Ctx) {
-	if inBlacklist(ctx.Event.Sender.ID) {
-		ctx.Send("你已被拉黑！如有疑问请联系 bot 管理。")
-		return
-	}
 	msg := ctx.Event.Message
 	if len(msg) < 2 {
 		return
@@ -54,7 +57,13 @@ func handleImgSave(ctx *zero.Ctx) {
 	if msg[0].Type != "text" {
 		return
 	}
-	userTarget := parseUserTarget(msg[0].Data["text"], "加图")
+	if inBlacklist(ctx.Event.Sender.ID) {
+		ctx.Send("你已被拉黑！如有疑问请联系 bot 管理。")
+		return
+	}
+	userArgs := ctx.State["args"].(string)
+	userTarget := strings.TrimSpace(userArgs)
+	userTarget = strings.ToLower(userTarget)
 	dirTarget := toTargetDirName(userTarget)
 	if dirTarget == "" {
 		ctx.Send(fmt.Sprintf("图库「%s」不存在！可联系机器人管理员创建。", userTarget))
@@ -89,12 +98,10 @@ func handleImgSave(ctx *zero.Ctx) {
 	ctx.Send(fmt.Sprintf("任务完成，已存入「%s」。成功保存 %d 张图片，失败 %d 张", dirTarget, successCount, failCount))
 }
 
-func handleRepoCreate(ctx *zero.Ctx) {
-
-}
-
 func handleImgGet(ctx *zero.Ctx) {
-	userTarget := parseUserTarget(ctx.MessageString(), "来张")
+	userArgs := ctx.State["args"].(string)
+	userTarget := strings.TrimSpace(userArgs)
+	userTarget = strings.ToLower(userTarget)
 	dirTarget := toTargetDirName(userTarget)
 	if dirTarget == "" {
 		ctx.Send(fmt.Sprintf("图库「%s」不存在！可联系机器人管理员创建。", userTarget))
@@ -110,6 +117,39 @@ func handleImgGet(ctx *zero.Ctx) {
 	if id := ctx.Send(m).ID(); id == 0 {
 		ctx.Send("ERROR: 可能被风控或读取图片用时过长，请耐心等待")
 	}
+}
+
+func handleImgsaveHelp(ctx *zero.Ctx) {
+	ctx.Send(helpInfo)
+}
+
+func handleRepoCreate(ctx *zero.Ctx) {
+	data := ctx.State["args"].(string)
+	if data == "" {
+		ctx.Send("请提供图库名，可设置别称，需要用空格隔开。\n例：创建图库 高坂穗乃果 高坂穂乃果 穗乃果 穂乃果 ほのか honoka")
+		return
+	}
+	repoNameList := strings.Split(data, " ")
+	for _, name := range repoNameList {
+		if target := toTargetDirName(name); target != "" {
+			ctx.Send(fmt.Sprintf("已存在图库「%s」使用了相同的名称「%s」", target, name))
+			return
+		}
+	}
+	config.Repos = append(config.Repos, repoNameList)
+	updateConfigToDisk()
+	successMsg := fmt.Sprintf("成功创建图库「%s」", data)
+	ctx.Send(successMsg)
+}
+
+func handleBlacklistAdd(ctx *zero.Ctx) {
+	data := ctx.State["args"].(string)
+	ctx.Send(data)
+}
+
+func handleBlacklistDel(ctx *zero.Ctx) {
+	data := ctx.State["args"].(string)
+	ctx.Send(data)
 }
 
 type UserImage struct {
@@ -142,14 +182,6 @@ func downloadImage(imgUrl, filePath string) bool {
 		return false
 	}
 	return true
-}
-
-func parseUserTarget(userSource, prefix string) string {
-	userTarget := strings.TrimSpace(userSource)
-	userTarget = strings.TrimPrefix(userTarget, prefix)
-	userTarget = strings.TrimSpace(userTarget)
-	userTarget = strings.ToLower(userTarget)
-	return userTarget
 }
 
 func toTargetDirName(s string) string {
@@ -200,7 +232,7 @@ func inBlacklist(uid int64) bool {
 func initConfig() {
 	confData, err := os.ReadFile(configFilePath)
 	if err != nil {
-		log.Panicln("[imgsace]", "fail to read config file!", err)
+		log.Panicln("[imgsace]", "fail to read config file", err)
 		return
 	}
 	if err := yaml.Unmarshal(confData, &config); err != nil {
@@ -208,6 +240,21 @@ func initConfig() {
 		return
 	}
 	log.Infoln("[imgsave]", config)
+}
+
+func updateConfigToDisk() {
+	file, err := os.OpenFile(configFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0664)
+	if err != nil {
+		log.Panicln("[imgsave]", "fail to open config file", err)
+		return
+	}
+	defer file.Close()
+	enc := yaml.NewEncoder(file)
+	err = enc.Encode(config)
+	if err != nil {
+		log.Panicln("[imgsave]", "fail to encoding config", err)
+		return
+	}
 }
 
 func initTargetDir() {
