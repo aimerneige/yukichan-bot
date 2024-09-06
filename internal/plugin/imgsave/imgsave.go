@@ -1,6 +1,7 @@
 package imgsave
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,7 +31,7 @@ const (
 
 type ImgsaveConfig struct {
 	Rootdit   string     `yaml:"rootdir"`
-	Repos     [][]string `yaml:"repos,flow"`
+	Repos     [][]string `yaml:"repos"`
 	Blacklist []int64    `yaml:"blacklist"`
 }
 
@@ -43,6 +45,7 @@ func init() {
 	engine.OnPrefix("加图").FirstPriority().SetBlock(true).Handle(handleImgSave)
 	engine.OnPrefix("来张").SecondPriority().SetBlock(true).Handle(handleImgGet)
 	engine.OnFullMatch("图库帮助").ThirdPriority().SetBlock(true).Handle(handleImgsaveHelp)
+	engine.OnFullMatch("图库列表").ThirdPriority().SetBlock(true).Handle(handleRepoList)
 	engine.OnPrefix("创建图库", zero.SuperUserPermission).SecondPriority().SetBlock(true).Handle(handleRepoCreate)
 	engine.OnPrefix("图库加黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistAdd)
 	engine.OnPrefix("图库去黑名单", zero.SuperUserPermission).ThirdPriority().SetBlock(true).Handle(handleBlacklistDel)
@@ -123,6 +126,15 @@ func handleImgsaveHelp(ctx *zero.Ctx) {
 	ctx.Send(helpInfo)
 }
 
+func handleRepoList(ctx *zero.Ctx) {
+	var buffer bytes.Buffer
+	for _, list := range config.Repos {
+		buffer.WriteString(strings.Join(list, " "))
+		buffer.WriteString("\n")
+	}
+	ctx.Send(buffer.String())
+}
+
 func handleRepoCreate(ctx *zero.Ctx) {
 	data := ctx.State["args"].(string)
 	if data == "" {
@@ -144,7 +156,18 @@ func handleRepoCreate(ctx *zero.Ctx) {
 
 func handleBlacklistAdd(ctx *zero.Ctx) {
 	data := ctx.State["args"].(string)
-	ctx.Send(data)
+	uid, err := strconv.ParseInt(data, 10, 64)
+	if err != nil {
+		ctx.Send(fmt.Sprintf("解析失败，「%s」不是准确的 QQ 号。", data))
+		return
+	}
+	if inBlacklist(uid) {
+		ctx.Send(fmt.Sprintf("添加失败，「%d」已经在黑名单里了。", uid))
+		return
+	}
+	config.Blacklist = append(config.Blacklist, uid)
+	updateConfigToDisk()
+	ctx.Send(fmt.Sprintf("成功添加「%d」到图库黑名单。", uid))
 }
 
 func handleBlacklistDel(ctx *zero.Ctx) {
