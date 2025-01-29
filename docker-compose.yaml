@@ -1,0 +1,10 @@
+services:
+  yukichan:
+    image: yukidocker
+    container_name: yukichan
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+        - ./config:/app/config
+        - ./data:/app/data
+        - ./temp:/app/temp
