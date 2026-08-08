@@ -5,7 +5,7 @@
   <h1>ゆき酱</h1>
 
   [![GitHub](https://img.shields.io/github/license/aimerneige/yukichan-bot)](https://raw.githubusercontent.com/aimerneige/yukichan-bot/main/LICENSE)
-	[![Man hours](https://img.shields.io/endpoint?url=https%3A%2F%2Fmanhours.aiursoft.cn%2Fr%2Fgithub.com%2Faimerneige%2Fyukichan-bot.json)](https://manhours.aiursoft.cn/)
+	[![Man hours](https://img.shields.io/endpoint?url=https%3A%2F%2Fmanhours.aiursoft.com%2Fr%2Fgithub.com%2Faimerneige%2Fyukichan-bot.json)](https://manhours.aiursoft.com/)
 
   ゆき酱是使用 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot) 构建的「**国际象棋**」聊天机器人。
 
@@ -41,7 +41,7 @@ make run
 
 |                                  项目地址                                   |                     平台                      |    核心作者    |        备注        |
 | :-------------------------------------------------------------------------: | :-------------------------------------------: | :------------: | :----------------: |
-|              [NapCat](https://github.com/NapNeko/NapCatQQ)                  |                     NTQQ                      |    NapNeko     |    目前推荐使用    |
+|                [NapCat](https://github.com/NapNeko/NapCatQQ)                |                     NTQQ                      |    NapNeko     |    目前推荐使用    |
 |              [LLOneBot](https://github.com/LLOneBot/LLOneBot)               |                     NTQQ                      |   linyuchen    |    目前推荐使用    |
 |               [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)               |  [MiraiGo](https://github.com/Mrs4s/MiraiGo)  |     Mrs4s      | 因签名原因不再维护 |
 |      [onebot-kotlin](https://github.com/yyuueexxiinngg/onebot-kotlin)       |    [Mirai](https://github.com/mamoe/mirai)    | yyuueexxiinngg |    不再积极维护    |
