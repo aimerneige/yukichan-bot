@@ -41,6 +41,7 @@ make run
 
 |                                  项目地址                                   |                     平台                      |    核心作者    |        备注        |
 | :-------------------------------------------------------------------------: | :-------------------------------------------: | :------------: | :----------------: |
+|              [NapCat](https://github.com/NapNeko/NapCatQQ)                  |                     NTQQ                      |    NapNeko     |    目前推荐使用    |
 |              [LLOneBot](https://github.com/LLOneBot/LLOneBot)               |                     NTQQ                      |   linyuchen    |    目前推荐使用    |
 |               [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)               |  [MiraiGo](https://github.com/Mrs4s/MiraiGo)  |     Mrs4s      | 因签名原因不再维护 |
 |      [onebot-kotlin](https://github.com/yyuueexxiinngg/onebot-kotlin)       |    [Mirai](https://github.com/mamoe/mirai)    | yyuueexxiinngg |    不再积极维护    |
@@ -75,6 +76,8 @@ sudo apt install -y libfuse2
 # 启动项目
 make run
 ```
+
+如需通过 NapCat-Docker 登录 QQ 账号并使用 OneBot V11 接入本项目，请参考 [NapCat-Docker 启动指南](NAPCAT_DOCKER_GUIDE.md)。
 
 ## 插件及用法
 

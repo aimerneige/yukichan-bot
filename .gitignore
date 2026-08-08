@@ -44,6 +44,7 @@ temp/chess/*.svg
 temp/chess/*.png
 temp/chess/*.pgn
 temp/ytdlp/*.mp4
+napcat/
 
 ### imgsave ###
 data/imgsave/

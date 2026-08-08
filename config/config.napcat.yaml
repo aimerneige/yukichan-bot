@@ -1,0 +1,8 @@
+common:
+  ws_server: "ws://napcat:3001"
+  ws_token: ""
+  nickname:
+    - "ゆき酱"
+  command_prefix: "/"
+  super_users:
+    - 1227427929
