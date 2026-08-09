@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+.agents
+.codex
+
+bin
+data
+temp
+napcat
+docs
+
+*.log
