@@ -74,7 +74,7 @@ func getSetu() (string, error) {
 	apiResponse := binary.BytesToString(data)
 	apiError := gjson.Get(apiResponse, "error").String()
 	if apiError != "" {
-		return "", fmt.Errorf(apiError)
+		return "", fmt.Errorf("%s", apiError)
 	}
 	imgUrl := gjson.Get(apiResponse, "data.0.urls.original").String()
 	log.Debugln("[setu]", "setu url:", imgUrl)
